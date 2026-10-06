@@ -53,6 +53,27 @@ def _load_dotenv(path: Path = ROOT / ".env") -> None:
             os.environ.setdefault(key.strip(), value.strip().strip("'\""))
 
 
+def _snapshot_download(repo_id: str, **kwargs) -> None:
+    """snapshot_download that waits out Hugging Face rate limits.
+
+    The dataset has ~8,000 files and the Hub allows a limited number of API
+    requests per 5 minutes, so a fresh download is throttled partway through.
+    Files already on disk are skipped, so retrying simply continues.
+    """
+    from huggingface_hub import snapshot_download
+    from huggingface_hub.errors import HfHubHTTPError
+
+    for attempt in range(1, 31):
+        try:
+            snapshot_download(repo_id, max_workers=8, **kwargs)
+            return
+        except HfHubHTTPError as exc:
+            if getattr(exc.response, "status_code", None) != 429 or attempt == 30:
+                raise
+            print(f"Hugging Face rate limit reached; resuming in 5 minutes (attempt {attempt})", flush=True)
+            time.sleep(300)
+
+
 def _flags(mapping: dict) -> list[str]:
     args: list[str] = []
     for key, value in mapping.items():
@@ -124,9 +145,7 @@ class Reproducer:
         if not (target / "adapter_config.json").exists():
             print(f"Downloading {repo} -> {target}", flush=True)
             if not self.args.dry_run:
-                from huggingface_hub import snapshot_download
-
-                snapshot_download(repo, local_dir=target)
+                _snapshot_download(repo, local_dir=target)
         return target
 
     def ensure_dataset(self) -> None:
@@ -138,9 +157,7 @@ class Reproducer:
         hf_dir = self.out / "hf_dataset"
         print(f"Downloading {dataset['hf_repo']}@{dataset['revision']} -> {hf_dir}", flush=True)
         if not self.args.dry_run:
-            from huggingface_hub import snapshot_download
-
-            snapshot_download(
+            _snapshot_download(
                 dataset["hf_repo"], repo_type="dataset",
                 revision=dataset["revision"], local_dir=hf_dir,
             )
