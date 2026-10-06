@@ -36,6 +36,22 @@ def test_a_rate_limited_download_waits_and_resumes(monkeypatch):
     assert len(calls) == 3 and sleeps == [300, 300]
 
 
+def test_the_lookup_error_of_a_throttled_file_check_is_retried(monkeypatch):
+    from huggingface_hub.errors import LocalEntryNotFoundError
+
+    calls = []
+
+    def download(repo_id, **kwargs):
+        calls.append(kwargs.get("revision"))
+        if len(calls) < 2:
+            raise LocalEntryNotFoundError("cannot locate the file on the Hub")
+
+    monkeypatch.setattr(huggingface_hub, "snapshot_download", download)
+    monkeypatch.setattr(reproduce.time, "sleep", lambda s: None)
+    reproduce._snapshot_download("DorianAtSchool/RoboTalk", repo_type="dataset")
+    assert len(calls) == 2
+
+
 def test_other_errors_are_not_retried(monkeypatch):
     def download(repo_id, **kwargs):
         raise _error(404)

@@ -53,22 +53,28 @@ def _load_dotenv(path: Path = ROOT / ".env") -> None:
             os.environ.setdefault(key.strip(), value.strip().strip("'\""))
 
 
-def _snapshot_download(repo_id: str, **kwargs) -> None:
+def _snapshot_download(repo_id: str, *, revision: str | None = None, **kwargs) -> None:
     """snapshot_download that waits out Hugging Face rate limits.
 
-    The dataset has ~8,000 files and the Hub allows a limited number of API
-    requests per 5 minutes, so a fresh download is throttled partway through.
-    Files already on disk are skipped, so retrying simply continues.
+    The dataset has ~16,000 files, more than the Hub's request quota per 5
+    minutes, so a fresh download is throttled partway through. The revision
+    is resolved to a commit once, so a retry skips files already on disk
+    without asking the Hub again, and simply continues.
     """
-    from huggingface_hub import snapshot_download
-    from huggingface_hub.errors import HfHubHTTPError
+    from huggingface_hub import HfApi, snapshot_download
+    from huggingface_hub.errors import HfHubHTTPError, LocalEntryNotFoundError
 
+    if revision is not None:
+        info = HfApi().repo_info(repo_id, repo_type=kwargs.get("repo_type"), revision=revision)
+        revision = info.sha
     for attempt in range(1, 31):
         try:
-            snapshot_download(repo_id, max_workers=8, **kwargs)
+            snapshot_download(repo_id, revision=revision, max_workers=8, **kwargs)
             return
-        except HfHubHTTPError as exc:
-            if getattr(exc.response, "status_code", None) != 429 or attempt == 30:
+        except (HfHubHTTPError, LocalEntryNotFoundError) as exc:
+            status = getattr(getattr(exc, "response", None), "status_code", None)
+            retryable = status == 429 or isinstance(exc, LocalEntryNotFoundError)
+            if not retryable or attempt == 30:
                 raise
             print(f"Hugging Face rate limit reached; resuming in 5 minutes (attempt {attempt})", flush=True)
             time.sleep(300)
