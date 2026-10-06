@@ -604,6 +604,9 @@ def _build_run_configuration(args: argparse.Namespace) -> RunConfiguration:
         raise ValueError("Enable at most one of --bf16 or --fp16.")
     processor_name_or_path = args.processor_name_or_path or args.model_name_or_path
     report_targets = _resolve_report_targets(args.report_to)
+    if args.wandb_mode == "disabled":
+        # transformers refuses report_to="wandb" together with WANDB_DISABLED.
+        report_targets = [target for target in report_targets if target != "wandb"]
     dataset_root = args.dataset_root.resolve()
     validation_trajectories_per_task = max(args.validation_trajectories_per_task, 0)
     validation_trajectory_fraction = args.validation_trajectory_fraction

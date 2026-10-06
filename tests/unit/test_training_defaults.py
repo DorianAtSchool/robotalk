@@ -40,3 +40,13 @@ def test_default_matches_the_paper(monkeypatch, flag):
         assert action.default is True
     else:
         assert type(value)(action.default) == value
+
+
+def test_disabled_wandb_is_not_a_report_target(monkeypatch, tmp_path):
+    monkeypatch.setattr(
+        "sys.argv",
+        ["main", "--wandb-mode", "disabled", "--dataset-root", str(tmp_path),
+         "--train-tasks", "prepare_coffee", "--output-dir", str(tmp_path / "out")],
+    )
+    config = training_main._build_run_configuration(training_main.parse_args())
+    assert "wandb" not in config.report_to
