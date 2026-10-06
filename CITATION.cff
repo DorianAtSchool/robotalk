@@ -1,0 +1,40 @@
+cff-version: 1.2.0
+message: "If you use RoboTalk, please cite the paper below."
+title: "RoboTalk"
+type: software
+license: Apache-2.0
+repository-code: "https://github.com/DorianAtSchool/robotalk"
+authors:
+  - family-names: Benhamou Goldfajn
+    given-names: Dorian
+  - family-names: Nakamura
+    given-names: Mason
+  - family-names: Mahmud
+    given-names: Saaduddin
+  - family-names: Svegliato
+    given-names: Justin
+  - family-names: Wray
+    given-names: Kyle H.
+  - family-names: Zilberstein
+    given-names: Shlomo
+preferred-citation:
+  type: article
+  title: "RoboTalk: Learning Multi-Robot Communication and Coordination from Multimodal Demonstrations"
+  authors:
+    - family-names: Benhamou Goldfajn
+      given-names: Dorian
+    - family-names: Nakamura
+      given-names: Mason
+    - family-names: Mahmud
+      given-names: Saaduddin
+    - family-names: Svegliato
+      given-names: Justin
+    - family-names: Wray
+      given-names: Kyle H.
+    - family-names: Zilberstein
+      given-names: Shlomo
+  journal: "arXiv preprint arXiv:2609.23997"
+  year: 2026
+  identifiers:
+    - type: url
+      value: "https://arxiv.org/abs/2609.23997"

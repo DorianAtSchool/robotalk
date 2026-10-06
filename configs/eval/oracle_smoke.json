@@ -1,0 +1,20 @@
+{
+  "trajectory_ids_by_task": {
+    "plate_store_dinner": [
+      "traj_000000",
+      "traj_000001"
+    ],
+    "prepare_coffee": [
+      "traj_000000",
+      "traj_000001"
+    ],
+    "setup_bowls": [
+      "traj_000000",
+      "traj_000001"
+    ],
+    "arrange_bread_bowl": [
+      "traj_000000",
+      "traj_000001"
+    ]
+  }
+}

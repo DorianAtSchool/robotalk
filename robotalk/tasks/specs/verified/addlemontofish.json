@@ -1,0 +1,348 @@
+{
+  "spec_version": 1,
+  "composite_task": "AddLemonToFish",
+  "source_python_module": "robocasa.environments.kitchen.composite.garnishing_dishes.add_lemon_to_fish",
+  "agent_ids": [
+    "agent_0",
+    "agent_1"
+  ],
+  "max_reasoning_chars": 200,
+  "validator_checks": [
+    "initial_communication",
+    "allowed_tools",
+    "navigation_preconditions",
+    "manipulation_preconditions",
+    "effects",
+    "final_success"
+  ],
+  "preflight_token_estimate": {
+    "prompt_tokens": 3000,
+    "output_tokens": 3500,
+    "reasoning_tokens": 0
+  },
+  "initial_state": {
+    "agents": {
+      "agent_0": {
+        "location": "fridge",
+        "held_object": null
+      },
+      "agent_1": {
+        "location": "dining_counter",
+        "held_object": null
+      }
+    },
+    "objects": {
+      "lemon_wedge": {
+        "object_type": "lemon_wedge",
+        "location": "fridge"
+      },
+      "fish_plate": {
+        "object_type": "plate",
+        "location": "dining_counter"
+      },
+      "fish": {
+        "object_type": "fish",
+        "location": "fish_plate"
+      }
+    },
+    "fixtures": {
+      "fridge": {
+        "fixture_type": "fridge",
+        "parts": {
+          "door": {
+            "part_type": "hinged_part",
+            "state": "closed"
+          }
+        }
+      },
+      "dining_counter": {
+        "fixture_type": "dining_counter"
+      }
+    },
+    "machine_state": {
+      "add_lemon_to_fish": {}
+    }
+  },
+  "allowed_tool_specs": {
+    "communicate": {
+      "description": "Send a short coordination message to the other agent in the scene. args.to must be that agent's exact ID. Set args.releases to the exact symbolic id of a thing you have finished with and are handing over -- that, and only that, wakes a partner who is waiting on it. Omit args.releases from every other message. args.releases must be an object id or a fixture id that appears in initial_state, copied exactly. It names a THING, never an event or a status: 'coffee_machine' and 'mug' are ids; 'mug_placed', 'counter_free' and 'task_done' are not, and an id that does not exist releases nothing at all. coordination_phase is optional and must be omitted from ordinary messages. Use it only for the opening propose/await_plan/await_confirmation/confirm handshake or for portion_complete.",
+      "tool_args": [
+        "to",
+        "message"
+      ],
+      "optional_tool_args": [
+        "releases",
+        "coordination_phase"
+      ],
+      "tool_arg_types": {
+        "coordination_phase": "STRING"
+      },
+      "allowed_arg_values": {
+        "coordination_phase": [
+          "propose",
+          "await_plan",
+          "await_confirmation",
+          "confirm",
+          "portion_complete"
+        ]
+      }
+    },
+    "wait_for_signal": {
+      "description": "Pause until the other agent hands over what you are waiting for. args.about names that thing by its exact symbolic id -- an object id or a fixture id that appears in initial_state, copied exactly. It is a THING you are waiting FOR, never an event you are waiting ON: wait about='coffee_machine', never about='mug_placed' or 'your_turn'. An id that is not in initial_state can never be released, so the wait blocks forever and the whole plan is thrown away. You stay paused until args.from sends a communicate whose args.releases names the same id -- their other messages do not wake you, so you do not need to wait again after an unrelated one.",
+      "tool_args": [
+        "from",
+        "about"
+      ]
+    },
+    "navigate_to_fixture": {
+      "description": "Move the robot base to the working pose of a fixture.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "fridge",
+        "dining_counter"
+      ]
+    },
+    "open_hinged_part": {
+      "description": "Open a hinged door, lid, or articulated head on a fixture.",
+      "tool_args": [
+        "target_id",
+        "part_id"
+      ],
+      "allowed_target_ids": [
+        "fridge"
+      ],
+      "allowed_part_ids": [
+        "door"
+      ]
+    },
+    "pick_up_object": {
+      "description": "Grasp and lift an object from a symbolic source region.",
+      "tool_args": [
+        "object_id",
+        "source_id"
+      ],
+      "optional_tool_args": [
+        "source_site_id"
+      ],
+      "allowed_object_ids": [
+        "lemon_wedge"
+      ],
+      "allowed_source_ids": [
+        "fridge"
+      ]
+    },
+    "place_on_object": {
+      "description": "Place an object on top of another movable support object such as a plate or cutting_board.",
+      "tool_args": [
+        "object_id"
+      ],
+      "tool_arg_any_of": [
+        [
+          "target_id",
+          "support_object_id"
+        ]
+      ],
+      "optional_tool_args": [
+        "target_id",
+        "relative_position"
+      ],
+      "allowed_object_ids": [
+        "lemon_wedge"
+      ],
+      "allowed_support_object_ids": [
+        "fish_plate"
+      ]
+    },
+    "give_space": {
+      "description": "Yield working room at a fixture so the other agent can complete an action there.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "fridge",
+        "dining_counter"
+      ]
+    }
+  },
+  "task_goal": "retrieve the lemon_wedge from the fridge and place it on the fish_plate with the fish on the dining counter.",
+  "extra_execution_rules": [
+    "Open the fridge door before picking up the lemon_wedge.",
+    "Place the lemon_wedge specifically on the fish_plate, not directly on the dining counter.",
+    "Do not move the fish or the fish_plate."
+  ],
+  "initial_public_state": {
+    "lemon_wedge_location": "fridge",
+    "fish_plate_location": "dining_counter",
+    "fish_location": "fish_plate"
+  },
+  "task_preconditions": [
+    {
+      "kind": "object_must_remain_at_location",
+      "object_id": "fish_plate",
+      "location": "dining_counter",
+      "message": "The fish_plate must remain on the dining counter."
+    },
+    {
+      "kind": "object_must_remain_at_location",
+      "object_id": "fish",
+      "location": "fish_plate",
+      "message": "The fish must remain on the fish_plate."
+    },
+    {
+      "kind": "fixture_part_state_required_for_pickup",
+      "tool": "pick_up_object",
+      "source_id": "fridge",
+      "fixture_id": "fridge",
+      "part_id": "door",
+      "required_state": "open",
+      "message": "The fridge door must be open to retrieve the lemon wedge."
+    }
+  ],
+  "goal_conditions": [
+    {
+      "kind": "object_at_location",
+      "object_id": "lemon_wedge",
+      "location": "fish_plate"
+    },
+    {
+      "kind": "object_at_location",
+      "object_id": "fish",
+      "location": "fish_plate"
+    },
+    {
+      "kind": "object_at_location",
+      "object_id": "fish_plate",
+      "location": "dining_counter"
+    }
+  ],
+  "task_effects": [],
+  "grounding": {
+    "legacy_symbol_aliases": {
+      "lemon_wedge_1": "lemon_wedge",
+      "fish_1": "fish",
+      "fish_container": "fish_plate",
+      "fridge_1": "fridge",
+      "dining_counter_1": "dining_counter"
+    },
+    "symbols": {
+      "lemon_wedge": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "role": "lemon_wedge",
+        "preferred_fixture_types": [
+          "fridge"
+        ],
+        "object_type": "lemon_wedge"
+      },
+      "fish": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "role": "fish",
+        "preferred_fixture_types": [
+          "dining_counter"
+        ],
+        "object_type": "fish"
+      },
+      "fish_plate": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "role": "plate",
+        "preferred_fixture_types": [
+          "dining_counter"
+        ],
+        "object_type": "plate"
+      },
+      "fridge": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "role": "fridge",
+        "preferred_fixture_types": [
+          "fridge"
+        ],
+        "fixture_type": "fridge"
+      },
+      "dining_counter": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "role": "dining_counter",
+        "preferred_fixture_types": [
+          "dining_counter"
+        ],
+        "fixture_type": "dining_counter"
+      }
+    }
+  },
+  "example_trajectory": {
+    "agents": [
+      {
+        "agent": "agent_0"
+      },
+      {
+        "agent": "agent_1"
+      }
+    ],
+    "steps": [
+      {
+        "step": 0,
+        "agent": "agent_0",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_1",
+          "message": "I will open the fridge and get the lemon wedge."
+        },
+        "reasoning": "Establishing a plan to retrieve the garnish."
+      },
+      {
+        "step": 1,
+        "agent": "agent_1",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_0",
+          "message": "I will wait at the dining counter to help with placement if needed."
+        },
+        "reasoning": "Coordinating positions to avoid congestion at the fridge."
+      },
+      {
+        "step": 2,
+        "agent": "agent_0",
+        "tool": "open_hinged_part",
+        "args": {
+          "target_id": "fridge",
+          "part_id": "door"
+        },
+        "reasoning": "I need to open the fridge to access the lemon wedge."
+      },
+      {
+        "step": 3,
+        "agent": "agent_0",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "lemon_wedge",
+          "source_id": "fridge"
+        },
+        "reasoning": "Retrieving the lemon wedge from the source fixture."
+      },
+      {
+        "step": 4,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "dining_counter"
+        },
+        "reasoning": "Moving to the dining counter where the fish is located."
+      },
+      {
+        "step": 5,
+        "agent": "agent_0",
+        "tool": "place_on_object",
+        "args": {
+          "object_id": "lemon_wedge",
+          "support_object_id": "fish_plate"
+        },
+        "reasoning": "Placing the lemon wedge on the plate with the fish completes the task."
+      }
+    ]
+  }
+}

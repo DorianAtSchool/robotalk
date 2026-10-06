@@ -1,0 +1,174 @@
+# Every model/evaluation cell behind Figs. 5-7 of the RoboTalk paper.
+# scripts/reproduce.py reads this file; values here are the exact settings
+# recovered from the paper's saved run_config.json / parallel_run.json files.
+
+dataset:
+  hf_repo: DorianAtSchool/RoboTalk
+  # v1.1 replaces 95 trajectories of the paper's v1.0 (see the dataset card);
+  # retraining therefore matches the paper within confidence intervals.
+  revision: v1.1
+  # Directory holding <task>/traj_XXXXXX/{original_trajectory,plan,metadata}.json
+  # plus images, i.e. the rendered dataset. Override with ROBOTALK_DATA_ROOT.
+  default_root: data/robotalk_rendered
+
+splits:
+  task_split: configs/splits/43_train_10_heldout.json
+  # Nested per-task trajectory subsets for the SFT scaling study.
+  selections:
+    30: configs/splits/selection_30.json
+    60: configs/splits/selection_60.json
+    90: configs/splits/selection_90.json
+    120: configs/splits/selection_120.json
+    150: configs/splits/selection_150.json
+
+evaluation:
+  cohort: configs/eval/fixed_live_sim_cohort.json
+  scene_compatibility_cache: configs/eval/scene_compatibility_cache_v2.json
+  cohort_splits: [train_task_types, heldout_task_types]
+  # Shared by every cell (live_sim_eval flags).
+  common_args:
+    --cohort-mode: sampled
+    --episodes-per-task: 10
+    --episodes-per-config: 1
+    --evaluation-seed: 20260817
+    --scene-sampling-seed: 20260819
+    --success-criterion: fsm
+    --uniform-durations: true
+    --map-renderer: raster
+    --map-dpi: 60
+    --gl-backend: egl
+    --no-record-firsts: true
+    --resume: true
+  workers: 4
+  # Decoding profiles. Instruct models decode greedily; Thinking models were
+  # evaluated with sampling, so their reproduced rates vary run to run.
+  profiles:
+    instruct:
+      --max-new-tokens: 256
+      --vllm-temperature: 0.0
+    thinking:
+      --max-new-tokens: 2048
+      --vllm-temperature: 0.6
+      --vllm-top-p: 0.95
+      --vllm-top-k: 20
+      --enable-thinking: true
+    thinking_no_rationale:
+      --max-new-tokens: 2048
+      --vllm-temperature: 0.6
+      --vllm-top-p: 0.95
+      --vllm-top-k: 20
+      --enable-thinking: true
+    gemini:
+      --max-new-tokens: 256
+  vllm:
+    # Settings of the paper's vLLM 0.27.1 server.
+    serve_args:
+      - --dtype
+      - bfloat16
+      - --max-model-len
+      - "16384"
+      - --gpu-memory-utilization
+      - "0.70"
+      - --enable-prefix-caching
+      - --limit-mm-per-prompt
+      - '{"image":3}'
+      - --mm-processor-kwargs
+      - '{"min_pixels":262144,"max_pixels":262144}'
+      - --mm-processor-cache-gb
+      - "2"
+      - --enable-auto-tool-choice
+    # Added only when a LoRA adapter is served.
+    lora_serve_args: [--max-lora-rank, "64"]
+    # Output parsers per decoding profile, as served for the paper (read from
+    # the evaluation servers' logs).
+    profile_serve_args:
+      instruct: [--tool-call-parser, hermes]
+      thinking: [--tool-call-parser, qwen3_xml, --reasoning-parser, qwen3]
+      thinking_no_rationale: [--tool-call-parser, qwen3_xml]
+    # Environment of the paper's vLLM server process.
+    env:
+      VLLM_USE_FLASHINFER_SAMPLER: "0"
+
+# Training hyperparameters shared by every SFT cell (robotalk.training.main flags).
+training:
+  main_args:
+    --image-resolution: 512
+    --validation-trajectories-per-task: 0
+    --validation-trajectory-fraction: 0
+    --validation-split-seed: 42
+    --per-device-batch-size: 8
+    --grad-accum: 2
+    --train-sampling-strategy: random
+    --learning-rate: 1.0e-4
+    --weight-decay: 0.01
+    --lr-scheduler-type: cosine
+    --warmup-ratio: 0.03
+    --max-length: 8192
+    --max-images-per-sample: 4
+    --num-workers: 8
+    --lora-r: 16
+    --lora-alpha: 32
+    --lora-dropout: 0.05
+    --num-epochs: 1
+    --checkpoints-per-epoch: 2
+    --save-total-limit: 2
+    --seed: 42
+    --bf16: true
+    --gradient-checkpointing: true
+    --attn-implementation: flash_attention_2
+    --supervise-last-assistant-turn-only: true
+    --no-ddp-find-unused-parameters: true
+  num_processes: 4
+
+models:
+  # --- Fig. 6 (SFT scaling) and Fig. 7 (rationale ablation) ---------------
+  instruct_s30:   {label: "SFT 30/task",  base: Qwen/Qwen3-VL-8B-Instruct, scale: 30,  train_reasoning: false, profile: instruct, adapter: DorianAtSchool/RoboTalk-Qwen3-VL-8B-Instruct-30traj,  figures: [fig6, fig7]}
+  instruct_s60:   {label: "SFT 60/task",  base: Qwen/Qwen3-VL-8B-Instruct, scale: 60,  train_reasoning: false, profile: instruct, adapter: DorianAtSchool/RoboTalk-Qwen3-VL-8B-Instruct-60traj,  figures: [fig6]}
+  instruct_s90:   {label: "SFT 90/task",  base: Qwen/Qwen3-VL-8B-Instruct, scale: 90,  train_reasoning: false, profile: instruct, adapter: DorianAtSchool/RoboTalk-Qwen3-VL-8B-Instruct-90traj,  figures: [fig6]}
+  instruct_s120:  {label: "SFT 120/task", base: Qwen/Qwen3-VL-8B-Instruct, scale: 120, train_reasoning: false, profile: instruct, adapter: DorianAtSchool/RoboTalk-Qwen3-VL-8B-Instruct-120traj, figures: [fig6]}
+  instruct_s150:  {label: "SFT 150/task", base: Qwen/Qwen3-VL-8B-Instruct, scale: 150, train_reasoning: false, profile: instruct, adapter: DorianAtSchool/RoboTalk-Qwen3-VL-8B-Instruct-150traj, figures: [fig6]}
+  thinking_rationale_s30:  {label: "Thinking + rationale SFT 30/task",  base: Qwen/Qwen3-VL-8B-Thinking, scale: 30,  train_reasoning: true, profile: thinking, adapter: DorianAtSchool/RoboTalk-Qwen3-VL-8B-Thinking-Rationale-30traj,  figures: [fig6, fig7]}
+  thinking_rationale_s60:  {label: "Thinking + rationale SFT 60/task",  base: Qwen/Qwen3-VL-8B-Thinking, scale: 60,  train_reasoning: true, profile: thinking, adapter: DorianAtSchool/RoboTalk-Qwen3-VL-8B-Thinking-Rationale-60traj,  figures: [fig6]}
+  thinking_rationale_s90:  {label: "Thinking + rationale SFT 90/task",  base: Qwen/Qwen3-VL-8B-Thinking, scale: 90,  train_reasoning: true, profile: thinking, adapter: DorianAtSchool/RoboTalk-Qwen3-VL-8B-Thinking-Rationale-90traj,  figures: [fig6]}
+  thinking_rationale_s120: {label: "Thinking + rationale SFT 120/task", base: Qwen/Qwen3-VL-8B-Thinking, scale: 120, train_reasoning: true, profile: thinking, adapter: DorianAtSchool/RoboTalk-Qwen3-VL-8B-Thinking-Rationale-120traj, figures: [fig6]}
+  thinking_rationale_s150: {label: "Thinking + rationale SFT 150/task", base: Qwen/Qwen3-VL-8B-Thinking, scale: 150, train_reasoning: true, profile: thinking, adapter: DorianAtSchool/RoboTalk-Qwen3-VL-8B-Thinking-Rationale-150traj, figures: [fig6]}
+  instruct_rationale_s30:  {label: "Instruct + rationale SFT 30/task",   base: Qwen/Qwen3-VL-8B-Instruct, scale: 30, train_reasoning: true,  profile: instruct, adapter: DorianAtSchool/RoboTalk-Qwen3-VL-8B-Instruct-Rationale-30traj, figures: [fig7]}
+  thinking_noreason_s30:   {label: "Thinking + no rationale SFT 30/task", base: Qwen/Qwen3-VL-8B-Thinking, scale: 30, train_reasoning: false, profile: thinking_no_rationale, adapter: DorianAtSchool/RoboTalk-Qwen3-VL-8B-Thinking-30traj, figures: [fig7]}
+
+  # --- Fig. 5 (communication ablation, untuned models) ---------------------
+  qwen_base_none:          {label: "Base Qwen3-VL-8B", base: Qwen/Qwen3-VL-8B-Instruct, profile: instruct, communication_mode: none,         figures: [fig5]}
+  qwen_base_unguided:      {label: "Base Qwen3-VL-8B", base: Qwen/Qwen3-VL-8B-Instruct, profile: instruct, communication_mode: unguided,     figures: [fig5]}
+  qwen_base_minimal:       {label: "Base Qwen3-VL-8B", base: Qwen/Qwen3-VL-8B-Instruct, profile: instruct, communication_mode: minimal,      figures: [fig5]}
+  qwen_base_intermediate:  {label: "Base Qwen3-VL-8B", base: Qwen/Qwen3-VL-8B-Instruct, profile: instruct, communication_mode: intermediate, figures: [fig5]}
+  qwen_base_full:          {label: "Base Qwen3-VL-8B", base: Qwen/Qwen3-VL-8B-Instruct, profile: instruct, communication_mode: full,         figures: [fig5]}
+  gemini_none:             {label: "Gemini 3 Flash", backend: gemini, base: gemini-3-flash-preview, profile: gemini, communication_mode: none,         figures: [fig5]}
+  gemini_unguided:         {label: "Gemini 3 Flash", backend: gemini, base: gemini-3-flash-preview, profile: gemini, communication_mode: unguided,     figures: [fig5]}
+  gemini_minimal:          {label: "Gemini 3 Flash", backend: gemini, base: gemini-3-flash-preview, profile: gemini, communication_mode: minimal,      figures: [fig5]}
+  gemini_intermediate:     {label: "Gemini 3 Flash", backend: gemini, base: gemini-3-flash-preview, profile: gemini, communication_mode: intermediate, figures: [fig5]}
+  gemini_full:             {label: "Gemini 3 Flash", backend: gemini, base: gemini-3-flash-preview, profile: gemini, communication_mode: full,         figures: [fig5]}
+
+# Error-free successes reported in the paper (trained / held-out episodes:
+# 430 / 100), used by reproduce.py to print paper-vs-reproduced tables.
+paper_results:
+  instruct_s30: [352, 45]
+  instruct_s60: [378, 64]
+  instruct_s90: [396, 55]
+  instruct_s120: [400, 48]
+  instruct_s150: [405, 65]
+  thinking_rationale_s30: [345, 71]
+  thinking_rationale_s60: [364, 72]
+  thinking_rationale_s90: [393, 66]
+  thinking_rationale_s120: [388, 77]
+  thinking_rationale_s150: [398, 73]
+  instruct_rationale_s30: [355, 58]
+  thinking_noreason_s30: [308, 50]
+  qwen_base_none: [1, 0]
+  qwen_base_unguided: [2, 0]
+  qwen_base_minimal: [5, 0]
+  qwen_base_intermediate: [7, 0]
+  qwen_base_full: [0, 0]
+  gemini_none: [33, 5]
+  gemini_unguided: [41, 8]
+  gemini_minimal: [186, 34]
+  gemini_intermediate: [198, 46]
+  gemini_full: [282, 72]

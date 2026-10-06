@@ -1,0 +1,395 @@
+{
+  "spec_version": 1,
+  "composite_task": "PrepareSoupServing",
+  "source_python_module": "robocasa.environments.kitchen.composite.serving_food.prepare_soup_serving",
+  "agent_ids": [
+    "agent_0",
+    "agent_1"
+  ],
+  "max_reasoning_chars": 200,
+  "validator_checks": [
+    "initial_communication",
+    "allowed_tools",
+    "navigation_preconditions",
+    "manipulation_preconditions",
+    "effects",
+    "final_success"
+  ],
+  "preflight_token_estimate": {
+    "prompt_tokens": 3000,
+    "output_tokens": 3500,
+    "reasoning_tokens": 0
+  },
+  "initial_state": {
+    "agents": {
+      "agent_0": {
+        "location": "cab",
+        "held_object": null
+      },
+      "agent_1": {
+        "location": "counter",
+        "held_object": null
+      }
+    },
+    "objects": {
+      "ladle": {
+        "object_type": "ladle",
+        "location": "cab"
+      },
+      "pot": {
+        "object_type": "pot",
+        "location": "stove"
+      },
+      "bowl1": {
+        "object_type": "bowl",
+        "location": "counter"
+      }
+    },
+    "fixtures": {
+      "stove": {
+        "fixture_type": "stove",
+        "parts": {},
+        "controls": {}
+      },
+      "cab": {
+        "fixture_type": "cabinet",
+        "parts": {
+          "hinged": {
+            "part_type": "hinged_part",
+            "state": "closed"
+          }
+        },
+        "controls": {},
+        "parent_fixture": "cabinet_parent_counter"
+      },
+      "counter": {
+        "fixture_type": "counter",
+        "parts": {},
+        "controls": {}
+      },
+      "cabinet_parent_counter": {
+        "fixture_type": "counter",
+        "parts": {},
+        "controls": {}
+      }
+    },
+    "machine_state": {
+      "prepare_soup_serving": {}
+    }
+  },
+  "allowed_tool_specs": {
+    "communicate": {
+      "description": "Send a short coordination message to the other agent in the scene. args.to must be that agent's exact ID. Set args.releases to the exact symbolic id of a thing you have finished with and are handing over -- that, and only that, wakes a partner who is waiting on it. Omit args.releases from every other message. args.releases must be an object id or a fixture id that appears in initial_state, copied exactly. It names a THING, never an event or a status: 'coffee_machine' and 'mug' are ids; 'mug_placed', 'counter_free' and 'task_done' are not, and an id that does not exist releases nothing at all. coordination_phase is optional and must be omitted from ordinary messages. Use it only for the opening propose/await_plan/await_confirmation/confirm handshake or for portion_complete.",
+      "tool_args": [
+        "to",
+        "message"
+      ],
+      "optional_tool_args": [
+        "releases",
+        "coordination_phase"
+      ],
+      "tool_arg_types": {
+        "coordination_phase": "STRING"
+      },
+      "allowed_arg_values": {
+        "coordination_phase": [
+          "propose",
+          "await_plan",
+          "await_confirmation",
+          "confirm",
+          "portion_complete"
+        ]
+      }
+    },
+    "wait_for_signal": {
+      "description": "Pause until the other agent hands over what you are waiting for. args.about names that thing by its exact symbolic id -- an object id or a fixture id that appears in initial_state, copied exactly. It is a THING you are waiting FOR, never an event you are waiting ON: wait about='coffee_machine', never about='mug_placed' or 'your_turn'. An id that is not in initial_state can never be released, so the wait blocks forever and the whole plan is thrown away. You stay paused until args.from sends a communicate whose args.releases names the same id -- their other messages do not wake you, so you do not need to wait again after an unrelated one.",
+      "tool_args": [
+        "from",
+        "about"
+      ]
+    },
+    "navigate_to_fixture": {
+      "description": "Move the robot base to the working pose of a fixture.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "cab",
+        "stove",
+        "counter",
+        "cabinet_parent_counter"
+      ]
+    },
+    "open_hinged_part": {
+      "description": "Open a hinged door, lid, or articulated head on a fixture.",
+      "tool_args": [
+        "target_id",
+        "part_id"
+      ],
+      "allowed_target_ids": [
+        "cab"
+      ],
+      "allowed_part_ids": [
+        "hinged"
+      ]
+    },
+    "close_hinged_part": {
+      "description": "Close a hinged door, lid, or articulated head on a fixture.",
+      "tool_args": [
+        "target_id",
+        "part_id"
+      ],
+      "allowed_target_ids": [
+        "cab"
+      ],
+      "allowed_part_ids": [
+        "hinged"
+      ]
+    },
+    "pick_up_object": {
+      "description": "Grasp and lift an object from a symbolic source region.",
+      "tool_args": [
+        "object_id",
+        "source_id"
+      ],
+      "optional_tool_args": [
+        "source_site_id"
+      ],
+      "allowed_object_ids": [
+        "ladle"
+      ],
+      "allowed_source_ids": [
+        "cab"
+      ]
+    },
+    "place_in_receptacle": {
+      "description": "Place an object into an interior or container-like receptacle. Use target_site_id separately when the exact basin, bowl, rack, shelf, slot, or tray matters.",
+      "tool_args": [
+        "object_id"
+      ],
+      "tool_arg_any_of": [
+        [
+          "target_id",
+          "receptacle_id"
+        ]
+      ],
+      "optional_tool_args": [
+        "target_id",
+        "receptacle_id",
+        "target_site_id",
+        "relative_position"
+      ],
+      "allowed_object_ids": [
+        "ladle"
+      ],
+      "allowed_receptacle_ids": [
+        "pot"
+      ]
+    },
+    "give_space": {
+      "description": "Yield working room at a fixture so the other agent can complete an action there.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "cab",
+        "stove",
+        "counter",
+        "cabinet_parent_counter"
+      ]
+    }
+  },
+  "task_goal": "Move the ladle from the cabinet to the pot, opening the cabinet first if it is closed. Leave the cabinet closed at the end.",
+  "extra_execution_rules": [
+    "The ladle must be placed inside the pot.",
+    "The cabinet door must be closed for final success."
+  ],
+  "initial_public_state": {
+    "ladle_location": "cab",
+    "cabinet_state": "closed"
+  },
+  "task_preconditions": [
+    {
+      "kind": "fixture_part_state_required_for_pickup",
+      "tool": "pick_up_object",
+      "source_id": "cab",
+      "fixture_id": "cab",
+      "part_id": "hinged",
+      "required_state": "open",
+      "message": "The cabinet must be open to pick up the ladle."
+    }
+  ],
+  "goal_conditions": [
+    {
+      "kind": "machine_flag_true",
+      "machine_path": [
+        "pot",
+        "ladle_in_pot"
+      ]
+    },
+    {
+      "kind": "fixture_part_state",
+      "fixture_id": "cab",
+      "part_id": "hinged",
+      "state": "closed",
+      "machine_path": null
+    },
+    {
+      "kind": "object_at_location",
+      "object_id": "ladle",
+      "location": "pot",
+      "machine_path": null
+    }
+  ],
+  "task_effects": [
+    {
+      "kind": "set_machine_flag_on_action",
+      "tool": "place_in_receptacle",
+      "args": {
+        "object_id": "ladle",
+        "receptacle_id": "pot"
+      },
+      "machine_path": [
+        "pot",
+        "ladle_in_pot"
+      ],
+      "value": true
+    }
+  ],
+  "grounding": {
+    "legacy_symbol_aliases": {},
+    "symbols": {
+      "ladle": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "ladle"
+      },
+      "pot": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "pot"
+      },
+      "bowl1": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "bowl"
+      },
+      "cab": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "object_id": "ladle",
+        "fixture_type": "cabinet"
+      },
+      "stove": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "object_id": "pot",
+        "fixture_type": "stove"
+      },
+      "counter": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "fixture_type": "counter"
+      },
+      "cabinet_parent_counter": {
+        "entity_type": "fixture",
+        "resolver": "nearest_placeable_surface_to_fixture",
+        "anchor_fixture_symbol": "cab",
+        "preferred_fixture_types": [
+          "counter"
+        ]
+      }
+    }
+  },
+  "example_trajectory": {
+    "agents": [
+      {
+        "agent": "agent_0"
+      },
+      {
+        "agent": "agent_1"
+      }
+    ],
+    "steps": [
+      {
+        "step": 0,
+        "agent": "agent_0",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_1",
+          "message": "I will move the ladle to the pot."
+        },
+        "reasoning": "Coordinating the task."
+      },
+      {
+        "step": 1,
+        "agent": "agent_1",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_0",
+          "message": "Understood, I will stay clear of the stove and cabinet."
+        },
+        "reasoning": "Acknowledging the plan."
+      },
+      {
+        "step": 2,
+        "agent": "agent_0",
+        "tool": "open_hinged_part",
+        "args": {
+          "target_id": "cab",
+          "part_id": "hinged"
+        },
+        "reasoning": "Opening the cabinet to access the ladle."
+      },
+      {
+        "step": 3,
+        "agent": "agent_0",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "ladle",
+          "source_id": "cab"
+        },
+        "reasoning": "Picking up the ladle."
+      },
+      {
+        "step": 4,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "stove"
+        },
+        "reasoning": "Moving to the stove to place the ladle in the pot."
+      },
+      {
+        "step": 5,
+        "agent": "agent_0",
+        "tool": "place_in_receptacle",
+        "args": {
+          "object_id": "ladle",
+          "receptacle_id": "pot"
+        },
+        "reasoning": "Placing the ladle in the pot."
+      },
+      {
+        "step": 6,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "cab"
+        },
+        "reasoning": "Returning to the cabinet to close it."
+      },
+      {
+        "step": 7,
+        "agent": "agent_0",
+        "tool": "close_hinged_part",
+        "args": {
+          "target_id": "cab",
+          "part_id": "hinged"
+        },
+        "reasoning": "Closing the cabinet as required."
+      }
+    ]
+  },
+  "notes": []
+}

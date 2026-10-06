@@ -1,0 +1,522 @@
+{
+  "spec_version": 1,
+  "composite_task": "SetUpSpiceStation",
+  "source_python_module": "robocasa.environments.kitchen.composite.seasoning_food.setup_spice_station",
+  "agent_ids": [
+    "agent_0",
+    "agent_1"
+  ],
+  "max_reasoning_chars": 200,
+  "validator_checks": [
+    "initial_communication",
+    "allowed_tools",
+    "navigation_preconditions",
+    "manipulation_preconditions",
+    "effects",
+    "final_success"
+  ],
+  "preflight_token_estimate": {
+    "prompt_tokens": 3000,
+    "output_tokens": 3500,
+    "reasoning_tokens": 0
+  },
+  "initial_state": {
+    "agents": {
+      "agent_0": {
+        "location": "cabinet",
+        "held_object": null
+      },
+      "agent_1": {
+        "location": "stove",
+        "held_object": null
+      }
+    },
+    "objects": {
+      "spice": {
+        "object_type": "spice",
+        "location": "cabinet"
+      },
+      "shaker": {
+        "object_type": "shaker",
+        "location": "cabinet"
+      },
+      "bottle": {
+        "object_type": "bottle",
+        "location": "cabinet"
+      }
+    },
+    "fixtures": {
+      "cabinet": {
+        "fixture_type": "cabinet",
+        "parts": {
+          "hinged": {
+            "part_type": "hinged_part",
+            "state": "open"
+          }
+        },
+        "controls": {},
+        "parent_fixture": "cabinet_parent_counter"
+      },
+      "stove": {
+        "fixture_type": "stove",
+        "parts": {},
+        "controls": {}
+      },
+      "counter_stove": {
+        "fixture_type": "counter",
+        "parts": {},
+        "controls": {}
+      },
+      "cabinet_parent_counter": {
+        "fixture_type": "counter",
+        "parts": {},
+        "controls": {}
+      }
+    },
+    "machine_state": {
+      "proximity": {
+        "spice_near_stove": false,
+        "shaker_near_stove": false,
+        "bottle_near_stove": false
+      },
+      "stove": {
+        "adjacent_location_id": "counter_stove"
+      }
+    }
+  },
+  "allowed_tool_specs": {
+    "communicate": {
+      "description": "Send a short coordination message to the other agent in the scene. args.to must be that agent's exact ID. Set args.releases to the exact symbolic id of a thing you have finished with and are handing over -- that, and only that, wakes a partner who is waiting on it. Omit args.releases from every other message. args.releases must be an object id or a fixture id that appears in initial_state, copied exactly. It names a THING, never an event or a status: 'coffee_machine' and 'mug' are ids; 'mug_placed', 'counter_free' and 'task_done' are not, and an id that does not exist releases nothing at all. coordination_phase is optional and must be omitted from ordinary messages. Use it only for the opening propose/await_plan/await_confirmation/confirm handshake or for portion_complete.",
+      "tool_args": [
+        "to",
+        "message"
+      ],
+      "optional_tool_args": [
+        "releases",
+        "coordination_phase"
+      ],
+      "tool_arg_types": {
+        "coordination_phase": "STRING"
+      },
+      "allowed_arg_values": {
+        "coordination_phase": [
+          "propose",
+          "await_plan",
+          "await_confirmation",
+          "confirm",
+          "portion_complete"
+        ]
+      }
+    },
+    "wait_for_signal": {
+      "description": "Pause until the other agent hands over what you are waiting for. args.about names that thing by its exact symbolic id -- an object id or a fixture id that appears in initial_state, copied exactly. It is a THING you are waiting FOR, never an event you are waiting ON: wait about='coffee_machine', never about='mug_placed' or 'your_turn'. An id that is not in initial_state can never be released, so the wait blocks forever and the whole plan is thrown away. You stay paused until args.from sends a communicate whose args.releases names the same id -- their other messages do not wake you, so you do not need to wait again after an unrelated one.",
+      "tool_args": [
+        "from",
+        "about"
+      ]
+    },
+    "navigate_to_fixture": {
+      "description": "Move the robot base to the working pose of a fixture.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "cabinet",
+        "stove",
+        "counter_stove",
+        "cabinet_parent_counter"
+      ]
+    },
+    "pick_up_object": {
+      "description": "Grasp and lift an object from a symbolic source region.",
+      "tool_args": [
+        "object_id",
+        "source_id"
+      ],
+      "optional_tool_args": [
+        "source_site_id"
+      ],
+      "allowed_object_ids": [
+        "spice",
+        "shaker",
+        "bottle"
+      ],
+      "allowed_source_ids": [
+        "cabinet"
+      ]
+    },
+    "place_next_to": {
+      "description": "Place an object adjacent to a reference object or nearby fixture on the same support surface. Use reference_object_id only for movable objects and reference_fixture_id only for fixtures.",
+      "tool_args": [
+        "object_id"
+      ],
+      "tool_arg_any_of": [
+        [
+          "reference_id",
+          "reference_object_id",
+          "reference_fixture_id"
+        ]
+      ],
+      "optional_tool_args": [
+        "reference_id",
+        "reference_object_id",
+        "reference_fixture_id",
+        "target_site_id",
+        "relative_position"
+      ],
+      "allowed_object_ids": [
+        "spice",
+        "shaker",
+        "bottle"
+      ],
+      "allowed_reference_fixture_ids": [
+        "stove"
+      ]
+    },
+    "give_space": {
+      "description": "Yield working room at a fixture so the other agent can complete an action there.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "cabinet",
+        "stove",
+        "counter_stove",
+        "cabinet_parent_counter"
+      ]
+    },
+    "open_hinged_part": {
+      "description": "Open a hinged door, lid, or articulated head on a fixture.",
+      "tool_args": [
+        "target_id",
+        "part_id"
+      ],
+      "allowed_target_ids": [
+        "cabinet"
+      ],
+      "allowed_part_ids": [
+        "hinged"
+      ]
+    }
+  },
+  "task_goal": "Collect the spice, bottle, and shaker from the cabinet and place them next to the stove.",
+  "extra_execution_rules": [
+    "Inspect cabinet.hinged in the initial state. If it is closed, open it before retrieving objects from cabinet.",
+    "Objects must be placed on the counter surface adjacent to the stove."
+  ],
+  "initial_public_state": {
+    "spice_location": "cabinet",
+    "shaker_location": "cabinet",
+    "bottle_location": "cabinet"
+  },
+  "task_preconditions": [
+    {
+      "kind": "fixture_part_state_required_for_pickup",
+      "tool": "pick_up_object",
+      "source_id": "cabinet",
+      "fixture_id": "cabinet",
+      "part_id": "hinged",
+      "required_state": "open"
+    }
+  ],
+  "goal_conditions": [
+    {
+      "kind": "machine_flag_true",
+      "machine_path": [
+        "proximity",
+        "spice_near_stove"
+      ]
+    },
+    {
+      "kind": "machine_flag_true",
+      "machine_path": [
+        "proximity",
+        "shaker_near_stove"
+      ]
+    },
+    {
+      "kind": "machine_flag_true",
+      "machine_path": [
+        "proximity",
+        "bottle_near_stove"
+      ]
+    },
+    {
+      "kind": "object_at_location",
+      "object_id": "spice",
+      "location": "counter_stove",
+      "machine_path": null
+    },
+    {
+      "kind": "object_at_location",
+      "object_id": "shaker",
+      "location": "counter_stove",
+      "machine_path": null
+    },
+    {
+      "kind": "object_at_location",
+      "object_id": "bottle",
+      "location": "counter_stove",
+      "machine_path": null
+    }
+  ],
+  "task_effects": [
+    {
+      "kind": "set_machine_flag_on_action",
+      "tool": "place_next_to",
+      "args": {
+        "object_id": "spice",
+        "reference_fixture_id": "stove"
+      },
+      "machine_path": [
+        "proximity",
+        "spice_near_stove"
+      ],
+      "value": true
+    },
+    {
+      "kind": "set_machine_flag_on_action",
+      "tool": "place_next_to",
+      "args": {
+        "object_id": "shaker",
+        "reference_fixture_id": "stove"
+      },
+      "machine_path": [
+        "proximity",
+        "shaker_near_stove"
+      ],
+      "value": true
+    },
+    {
+      "kind": "set_machine_flag_on_action",
+      "tool": "place_next_to",
+      "args": {
+        "object_id": "bottle",
+        "reference_fixture_id": "stove"
+      },
+      "machine_path": [
+        "proximity",
+        "bottle_near_stove"
+      ],
+      "value": true
+    }
+  ],
+  "grounding": {
+    "legacy_symbol_aliases": {},
+    "symbols": {
+      "spice": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "spice"
+      },
+      "shaker": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "shaker"
+      },
+      "bottle": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "bottle"
+      },
+      "cabinet": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "object_id": "spice",
+        "fixture_type": "cabinet"
+      },
+      "stove": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "fixture_type": "stove"
+      },
+      "counter_stove": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "fixture_type": "counter"
+      },
+      "cabinet_parent_counter": {
+        "entity_type": "fixture",
+        "resolver": "nearest_placeable_surface_to_fixture",
+        "anchor_fixture_symbol": "cabinet",
+        "preferred_fixture_types": [
+          "counter"
+        ]
+      }
+    }
+  },
+  "example_trajectory": {
+    "agents": [
+      {
+        "agent": "agent_0"
+      },
+      {
+        "agent": "agent_1"
+      }
+    ],
+    "steps": [
+      {
+        "step": 0,
+        "agent": "agent_0",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_1",
+          "message": "I will take the spice and the shaker. You take the bottle."
+        },
+        "reasoning": "Coordinating task division."
+      },
+      {
+        "step": 1,
+        "agent": "agent_1",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_0",
+          "message": "Understood. I'll wait for you to clear the cabinet."
+        },
+        "reasoning": "Acknowledging plan."
+      },
+      {
+        "step": 2,
+        "agent": "agent_1",
+        "tool": "give_space",
+        "args": {
+          "fixture_id": "cabinet"
+        },
+        "reasoning": "Clearing a shared fixture already occupied by this agent before the other agent uses it."
+      },
+      {
+        "step": 3,
+        "agent": "agent_0",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "spice",
+          "source_id": "cabinet"
+        },
+        "reasoning": "Picking up the first item."
+      },
+      {
+        "step": 4,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "stove"
+        },
+        "reasoning": "Moving to the target area."
+      },
+      {
+        "step": 5,
+        "agent": "agent_0",
+        "tool": "place_next_to",
+        "args": {
+          "object_id": "spice",
+          "reference_fixture_id": "stove"
+        },
+        "reasoning": "Placing spice near stove."
+      },
+      {
+        "step": 6,
+        "agent": "agent_0",
+        "tool": "give_space",
+        "args": {
+          "fixture_id": "stove"
+        },
+        "reasoning": "Clearing area for next placement."
+      },
+      {
+        "step": 7,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "cabinet"
+        },
+        "reasoning": "Returning for second item."
+      },
+      {
+        "step": 8,
+        "agent": "agent_0",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "shaker",
+          "source_id": "cabinet"
+        },
+        "reasoning": "Picking up shaker."
+      },
+      {
+        "step": 9,
+        "agent": "agent_0",
+        "tool": "give_space",
+        "args": {
+          "fixture_id": "cabinet"
+        },
+        "reasoning": "Letting agent_1 access cabinet."
+      },
+      {
+        "step": 10,
+        "agent": "agent_1",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "cabinet"
+        },
+        "reasoning": "Moving to cabinet now that it is clear."
+      },
+      {
+        "step": 11,
+        "agent": "agent_1",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "bottle",
+          "source_id": "cabinet"
+        },
+        "reasoning": "Picking up bottle."
+      },
+      {
+        "step": 12,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "stove"
+        },
+        "reasoning": "Moving shaker to stove."
+      },
+      {
+        "step": 13,
+        "agent": "agent_0",
+        "tool": "place_next_to",
+        "args": {
+          "object_id": "shaker",
+          "reference_fixture_id": "stove"
+        },
+        "reasoning": "Placing shaker near stove."
+      },
+      {
+        "step": 14,
+        "agent": "agent_0",
+        "tool": "give_space",
+        "args": {
+          "fixture_id": "stove"
+        },
+        "reasoning": "Clearing stove area for agent_1."
+      },
+      {
+        "step": 15,
+        "agent": "agent_1",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "stove"
+        },
+        "reasoning": "Moving bottle to stove."
+      },
+      {
+        "step": 16,
+        "agent": "agent_1",
+        "tool": "place_next_to",
+        "args": {
+          "object_id": "bottle",
+          "reference_fixture_id": "stove"
+        },
+        "reasoning": "Placing bottle near stove."
+      }
+    ]
+  },
+  "notes": []
+}

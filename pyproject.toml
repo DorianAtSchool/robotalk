@@ -1,0 +1,122 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "robotalk"
+version = "1.0.0"
+description = "RoboTalk: Learning Multi-Robot Communication and Coordination from Multimodal Demonstrations"
+readme = { file = "README.md", content-type = "text/markdown" }
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE", "robocasa/LICENSE"]
+requires-python = ">=3.11,<3.13"
+authors = [
+    { name = "Dorian Benhamou Goldfajn" },
+    { name = "Mason Nakamura" },
+    { name = "Saaduddin Mahmud" },
+    { name = "Justin Svegliato" },
+    { name = "Kyle H. Wray" },
+    { name = "Shlomo Zilberstein" },
+]
+# Simulator, symbolic validator and live-sim evaluation client. Every direct
+# dependency is pinned to the version the paper's results were produced with;
+# uv.lock pins the rest.
+dependencies = [
+    # robosuite exactly as the experiments ran it: upstream ARISE aaa8b9b plus
+    # one commit that gives each robot's manipulator_mount body a unique name,
+    # which scenes with two mobile manipulators need.
+    "robosuite @ git+https://github.com/DorianAtSchool/robosuite.git@94f9aa2ffe83b4938bf686712c2e878f63d1fb4f",
+    "mujoco==3.3.1",
+    "numpy==2.2.5",
+    "numba==0.61.2",
+    "scipy==1.15.3",
+    "av==18.0.0",
+    "gymnasium==0.29.1",
+    "h5py==3.16.0",
+    "imageio==2.37.4",
+    "imageio-ffmpeg==0.6.0",  # MP4 writer for live-sim episode recordings
+    "lxml==6.1.1",
+    "matplotlib==3.11.1",
+    "opencv-python==5.0.0.93",
+    "Pillow==12.2.0",
+    "pyyaml==6.0.3",
+    "rich==15.0.0",
+    "termcolor==3.3.0",
+    "tqdm==4.69.0",
+    "huggingface_hub==0.36.2",
+    "pyarrow==25.0.0",
+]
+
+[project.optional-dependencies]
+# Trajectory generation and the Gemini evaluation cells.
+gen = [
+    "google-genai==2.15.0",
+    "google-auth==2.56.2",
+    "datasets==3.6.0",
+]
+# LoRA fine-tuning of Qwen3-VL (FlashAttention-2 is the separate `flash` extra).
+train = [
+    "torch==2.7.1",
+    "torchvision==0.22.1",
+    "transformers==4.57.6",
+    "peft==0.19.1",
+    "accelerate==1.14.0",
+    "datasets==3.6.0",
+    "safetensors==0.8.0",
+    "zstandard==0.25.0",
+    "wandb==0.25.0",
+]
+# FlashAttention-2, as used for the paper's training runs: the prebuilt wheel
+# for CUDA 12 / torch 2.7 / Python 3.11 (building from source needs nvcc).
+# Elsewhere, train with --attn-implementation sdpa.
+flash = [
+    "flash-attn @ https://github.com/Dao-AILab/flash-attention/releases/download/v2.8.3.post1/flash_attn-2.8.3.post1+cu12torch2.7cxx11abiTRUE-cp311-cp311-linux_x86_64.whl ; sys_platform == 'linux' and python_version == '3.11' and platform_machine == 'x86_64'",
+]
+dev = [
+    "pytest==9.1.1",
+]
+
+[project.urls]
+Paper = "https://arxiv.org/abs/2609.23997"
+Dataset = "https://huggingface.co/datasets/DorianAtSchool/RoboTalk"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["robotalk*", "robocasa*"]
+
+[tool.setuptools.package-data]
+robotalk = ["**/*.json", "**/*.md", "**/*.txt", "**/*.html"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests/unit", "tests/sim"]
+markers = [
+    "sim: builds MuJoCo scenes; needs the RoboCasa kitchen assets (tests/sim)",
+]
+
+# GPU ASSUMPTION: torch comes from the CUDA 12.8 index, matching the paper's
+# environment. These wheels have kernels for compute capability 7.5-12.0
+# (Turing, Ampere, Hopper, Blackwell) and need an NVIDIA driver that supports
+# CUDA 12.8 (>= 570). Blackwell GPUs (e.g. RTX PRO 6000, B200) require them:
+# the default PyPI torch 2.7.1 wheel (CUDA 12.6) fails there with "no kernel
+# image is available". Volta (V100) and older GPUs are not supported by these
+# wheels; on such machines point torch/torchvision at another index, e.g.
+# https://download.pytorch.org/whl/cu126.
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+torchvision = { index = "pytorch-cu128" }
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.ruff]
+target-version = "py311"
+include = ["robotalk/**/*.py", "scripts/**/*.py", "tests/**/*.py"]
+
+[tool.ruff.lint]
+# Correctness only: syntax errors and pyflakes (undefined names, unused
+# imports and variables, redefinitions).
+select = ["E9", "F"]

@@ -1,0 +1,405 @@
+{
+  "spec_version": 1,
+  "composite_task": "PortionYogurt",
+  "source_python_module": "robocasa.environments.kitchen.composite.portioning_meals.portion_yogurt",
+  "agent_ids": [
+    "agent_0",
+    "agent_1"
+  ],
+  "max_reasoning_chars": 200,
+  "validator_checks": [
+    "initial_communication",
+    "allowed_tools",
+    "navigation_preconditions",
+    "manipulation_preconditions",
+    "effects",
+    "final_success"
+  ],
+  "preflight_token_estimate": {
+    "prompt_tokens": 3500,
+    "output_tokens": 4200,
+    "reasoning_tokens": 0
+  },
+  "initial_state": {
+    "agents": {
+      "agent_0": {
+        "location": "dining_counter",
+        "held_object": null
+      },
+      "agent_1": {
+        "location": "dining_counter",
+        "held_object": null
+      }
+    },
+    "objects": {
+      "plate1": {
+        "object_type": "plate",
+        "location": "dining_counter"
+      },
+      "plate2": {
+        "object_type": "plate",
+        "location": "dining_counter"
+      },
+      "yogurt1": {
+        "object_type": "yogurt",
+        "location": "dining_counter"
+      },
+      "yogurt2": {
+        "object_type": "yogurt",
+        "location": "dining_counter"
+      },
+      "yogurt3": {
+        "object_type": "yogurt",
+        "location": "dining_counter"
+      },
+      "yogurt4": {
+        "object_type": "yogurt",
+        "location": "dining_counter"
+      }
+    },
+    "fixtures": {
+      "dining_counter": {
+        "fixture_type": "dining_counter"
+      }
+    },
+    "machine_state": {
+      "portion_yogurt": {}
+    }
+  },
+  "allowed_tool_specs": {
+    "communicate": {
+      "description": "Send a short coordination message to the other agent in the scene. args.to must be that agent's exact ID. Set args.releases to the exact symbolic id of a thing you have finished with and are handing over -- that, and only that, wakes a partner who is waiting on it. Omit args.releases from every other message. args.releases must be an object id or a fixture id that appears in initial_state, copied exactly. It names a THING, never an event or a status: 'coffee_machine' and 'mug' are ids; 'mug_placed', 'counter_free' and 'task_done' are not, and an id that does not exist releases nothing at all. coordination_phase is optional and must be omitted from ordinary messages. Use it only for the opening propose/await_plan/await_confirmation/confirm handshake or for portion_complete.",
+      "tool_args": [
+        "to",
+        "message"
+      ],
+      "optional_tool_args": [
+        "releases",
+        "coordination_phase"
+      ],
+      "tool_arg_types": {
+        "coordination_phase": "STRING"
+      },
+      "allowed_arg_values": {
+        "coordination_phase": [
+          "propose",
+          "await_plan",
+          "await_confirmation",
+          "confirm",
+          "portion_complete"
+        ]
+      }
+    },
+    "wait_for_signal": {
+      "description": "Pause until the other agent hands over what you are waiting for. args.about names that thing by its exact symbolic id -- an object id or a fixture id that appears in initial_state, copied exactly. It is a THING you are waiting FOR, never an event you are waiting ON: wait about='coffee_machine', never about='mug_placed' or 'your_turn'. An id that is not in initial_state can never be released, so the wait blocks forever and the whole plan is thrown away. You stay paused until args.from sends a communicate whose args.releases names the same id -- their other messages do not wake you, so you do not need to wait again after an unrelated one.",
+      "tool_args": [
+        "from",
+        "about"
+      ]
+    },
+    "navigate_to_fixture": {
+      "description": "Move the robot base to the working pose of a fixture.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "dining_counter"
+      ]
+    },
+    "pick_up_object": {
+      "description": "Grasp and lift an object from a symbolic source region.",
+      "tool_args": [
+        "object_id",
+        "source_id"
+      ],
+      "optional_tool_args": [
+        "source_site_id"
+      ],
+      "allowed_object_ids": [
+        "yogurt1",
+        "yogurt2",
+        "yogurt3",
+        "yogurt4"
+      ],
+      "allowed_source_ids": [
+        "dining_counter"
+      ]
+    },
+    "place_on_object": {
+      "description": "Place an object on top of another movable support object such as a plate or cutting_board.",
+      "tool_args": [
+        "object_id"
+      ],
+      "tool_arg_any_of": [
+        [
+          "target_id",
+          "support_object_id"
+        ]
+      ],
+      "optional_tool_args": [
+        "target_id",
+        "relative_position"
+      ],
+      "allowed_object_ids": [
+        "yogurt1",
+        "yogurt2",
+        "yogurt3",
+        "yogurt4"
+      ],
+      "allowed_support_object_ids": [
+        "plate1",
+        "plate2"
+      ]
+    },
+    "give_space": {
+      "description": "Yield working room at a fixture so the other agent can complete an action there.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "dining_counter"
+      ]
+    }
+  },
+  "task_goal": "place exactly two yogurt containers on plate1 and exactly two yogurt containers on plate2.",
+  "extra_execution_rules": [
+    "Place yogurts on plates, not directly on the dining counter.",
+    "Each plate must contain exactly two yogurts.",
+    "Do not move the plates from their initial positions on the dining counter."
+  ],
+  "initial_public_state": {
+    "plate1_location": "dining_counter",
+    "plate2_location": "dining_counter",
+    "yogurt1_location": "dining_counter",
+    "yogurt2_location": "dining_counter",
+    "yogurt3_location": "dining_counter",
+    "yogurt4_location": "dining_counter"
+  },
+  "task_preconditions": [
+    {
+      "kind": "object_must_remain_at_location",
+      "object_id": "plate1",
+      "location": "dining_counter",
+      "message": "plate1 must remain on the dining counter."
+    },
+    {
+      "kind": "object_must_remain_at_location",
+      "object_id": "plate2",
+      "location": "dining_counter",
+      "message": "plate2 must remain on the dining counter."
+    }
+  ],
+  "goal_conditions": [
+    {
+      "kind": "object_count_at_location",
+      "object_ids": [
+        "yogurt1",
+        "yogurt2",
+        "yogurt3",
+        "yogurt4"
+      ],
+      "location": "plate1",
+      "count": 2
+    },
+    {
+      "kind": "object_count_at_location",
+      "object_ids": [
+        "yogurt1",
+        "yogurt2",
+        "yogurt3",
+        "yogurt4"
+      ],
+      "location": "plate2",
+      "count": 2
+    }
+  ],
+  "task_effects": [],
+  "grounding": {
+    "legacy_symbol_aliases": {
+      "plate1_1": "plate1",
+      "plate2_1": "plate2",
+      "yogurt1_1": "yogurt1",
+      "yogurt2_1": "yogurt2",
+      "yogurt3_1": "yogurt3",
+      "yogurt4_1": "yogurt4",
+      "dining_counter_1": "dining_counter"
+    },
+    "symbols": {
+      "plate1": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "role": "plate1",
+        "preferred_fixture_types": [
+          "dining_counter"
+        ],
+        "object_type": "plate"
+      },
+      "plate2": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "role": "plate2",
+        "preferred_fixture_types": [
+          "dining_counter"
+        ],
+        "object_type": "plate"
+      },
+      "yogurt1": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "role": "yogurt1",
+        "preferred_fixture_types": [
+          "dining_counter"
+        ],
+        "object_type": "yogurt"
+      },
+      "yogurt2": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "role": "yogurt2",
+        "preferred_fixture_types": [
+          "dining_counter"
+        ],
+        "object_type": "yogurt"
+      },
+      "yogurt3": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "role": "yogurt3",
+        "preferred_fixture_types": [
+          "dining_counter"
+        ],
+        "object_type": "yogurt"
+      },
+      "yogurt4": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "role": "yogurt4",
+        "preferred_fixture_types": [
+          "dining_counter"
+        ],
+        "object_type": "yogurt"
+      },
+      "dining_counter": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "role": "dining_counter",
+        "preferred_fixture_types": [
+          "dining_counter"
+        ],
+        "fixture_type": "dining_counter"
+      }
+    }
+  },
+  "example_trajectory": {
+    "agents": [
+      {
+        "agent": "agent_0"
+      },
+      {
+        "agent": "agent_1"
+      }
+    ],
+    "steps": [
+      {
+        "step": 0,
+        "agent": "agent_0",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_1",
+          "message": "I will place yogurt1 and yogurt2 on plate1."
+        },
+        "reasoning": "We need to divide the four yogurts between the two plates."
+      },
+      {
+        "step": 1,
+        "agent": "agent_1",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_0",
+          "message": "I will place yogurt3 and yogurt4 on plate2."
+        },
+        "reasoning": "I will handle the second plate to complete the task efficiently."
+      },
+      {
+        "step": 2,
+        "agent": "agent_0",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "yogurt1",
+          "source_id": "dining_counter"
+        },
+        "reasoning": "I am starting with the first yogurt for plate1."
+      },
+      {
+        "step": 3,
+        "agent": "agent_1",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "yogurt3",
+          "source_id": "dining_counter"
+        },
+        "reasoning": "I am starting with the first yogurt for plate2."
+      },
+      {
+        "step": 4,
+        "agent": "agent_0",
+        "tool": "place_on_object",
+        "args": {
+          "object_id": "yogurt1",
+          "support_object_id": "plate1"
+        },
+        "reasoning": "Placing the first yogurt on plate1."
+      },
+      {
+        "step": 5,
+        "agent": "agent_1",
+        "tool": "place_on_object",
+        "args": {
+          "object_id": "yogurt3",
+          "support_object_id": "plate2"
+        },
+        "reasoning": "Placing the first yogurt on plate2."
+      },
+      {
+        "step": 6,
+        "agent": "agent_0",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "yogurt2",
+          "source_id": "dining_counter"
+        },
+        "reasoning": "I am picking up the second yogurt for plate1."
+      },
+      {
+        "step": 7,
+        "agent": "agent_1",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "yogurt4",
+          "source_id": "dining_counter"
+        },
+        "reasoning": "I am picking up the second yogurt for plate2."
+      },
+      {
+        "step": 8,
+        "agent": "agent_0",
+        "tool": "place_on_object",
+        "args": {
+          "object_id": "yogurt2",
+          "support_object_id": "plate1"
+        },
+        "reasoning": "Placing the second yogurt on plate1."
+      },
+      {
+        "step": 9,
+        "agent": "agent_1",
+        "tool": "place_on_object",
+        "args": {
+          "object_id": "yogurt4",
+          "support_object_id": "plate2"
+        },
+        "reasoning": "Placing the second yogurt on plate2 completes the task."
+      }
+    ]
+  }
+}

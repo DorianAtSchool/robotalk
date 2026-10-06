@@ -1,0 +1,907 @@
+{
+  "trajectory_id": "traj_000000",
+  "composite_task": "AddLemonToFish",
+  "agents": [
+    {
+      "agent": "agent_0"
+    },
+    {
+      "agent": "agent_1"
+    }
+  ],
+  "initial_state": {
+    "agents": {
+      "agent_0": {
+        "location": "fridge",
+        "held_object": null
+      },
+      "agent_1": {
+        "location": "dining_counter",
+        "held_object": null
+      }
+    },
+    "objects": {
+      "lemon_wedge": {
+        "object_type": "lemon_wedge",
+        "location": "fridge"
+      },
+      "fish_plate": {
+        "object_type": "plate",
+        "location": "dining_counter"
+      },
+      "fish": {
+        "object_type": "fish",
+        "location": "fish_plate"
+      }
+    },
+    "fixtures": {
+      "fridge": {
+        "fixture_type": "fridge",
+        "parts": {
+          "door": {
+            "part_type": "hinged_part",
+            "state": "closed"
+          }
+        }
+      },
+      "dining_counter": {
+        "fixture_type": "dining_counter"
+      }
+    },
+    "machine_state": {
+      "add_lemon_to_fish": {}
+    }
+  },
+  "steps": [
+    {
+      "step": 0,
+      "agent": "agent_0",
+      "tool": "get_image",
+      "args": {
+        "views": [
+          "top_view",
+          "room_view",
+          "map"
+        ]
+      },
+      "reasoning": "I need top-view, room-view, and map images before the task begins.",
+      "image_paths": [
+        "images/traj_000000/0_top_view_agent_0.png",
+        "images/traj_000000/0_room_view_agent_0.png",
+        "images/traj_000000/0_map_agent_0.png"
+      ]
+    },
+    {
+      "step": 1,
+      "agent": "agent_1",
+      "tool": "get_image",
+      "args": {
+        "views": [
+          "top_view",
+          "room_view",
+          "map"
+        ]
+      },
+      "reasoning": "I need top-view, room-view, and map images before the task begins.",
+      "image_paths": [
+        "images/traj_000000/1_top_view_agent_1.png",
+        "images/traj_000000/1_room_view_agent_1.png",
+        "images/traj_000000/1_map_agent_1.png"
+      ]
+    },
+    {
+      "tool": "communicate",
+      "args": {
+        "to": "agent_1",
+        "message": "I will open the fridge door for you."
+      },
+      "reasoning": "I am coordinating with agent_1 to start the task by opening the fridge.",
+      "agent": "agent_0",
+      "step": 2
+    },
+    {
+      "tool": "communicate",
+      "args": {
+        "to": "agent_0",
+        "message": "I will wait for your signal before moving to the fridge."
+      },
+      "reasoning": "I am acknowledging agent_0's plan and preparing to wait for access to the fridge.",
+      "agent": "agent_1",
+      "step": 3
+    },
+    {
+      "step": 4,
+      "agent": "agent_0",
+      "tool": "get_image",
+      "args": {
+        "views": [
+          "wrist",
+          "agentview_center"
+        ]
+      },
+      "reasoning": "I need wrist and center agent-view images to observe the current scene before I execute open_hinged_part.",
+      "image_paths": [
+        "images/traj_000000/4_wrist_agent_0.png",
+        "images/traj_000000/4_agentview_center_agent_0.png"
+      ]
+    },
+    {
+      "tool": "open_hinged_part",
+      "args": {
+        "target_id": "fridge",
+        "part_id": "door"
+      },
+      "reasoning": "I am opening the fridge door to access the lemon for agent_1.",
+      "agent": "agent_0",
+      "step": 5
+    },
+    {
+      "tool": "communicate",
+      "args": {
+        "to": "agent_0",
+        "message": "Tell me when the fridge is free."
+      },
+      "reasoning": "I am asking agent_0 to notify me when the fridge workspace is available.",
+      "agent": "agent_1",
+      "step": 6
+    },
+    {
+      "step": 7,
+      "agent": "agent_0",
+      "tool": "get_image",
+      "args": {
+        "views": [
+          "wrist",
+          "agentview_center"
+        ]
+      },
+      "reasoning": "I need wrist and center agent-view images to observe the current scene after I executed open_hinged_part.",
+      "image_paths": [
+        "images/traj_000000/7_wrist_agent_0.png",
+        "images/traj_000000/7_agentview_center_agent_0.png"
+      ]
+    },
+    {
+      "tool": "communicate",
+      "args": {
+        "to": "agent_1",
+        "message": "I am about to step away from the fridge."
+      },
+      "reasoning": "I am informing agent_1 that I am finished with the fridge and will move shortly.",
+      "agent": "agent_0",
+      "step": 8
+    },
+    {
+      "tool": "wait_for_signal",
+      "args": {
+        "from": "agent_0",
+        "about": "fridge"
+      },
+      "reasoning": "I am blocking until agent_0 signals that the fridge is clear for me to use.",
+      "agent": "agent_1",
+      "step": 9
+    },
+    {
+      "step": 10,
+      "agent": "agent_0",
+      "tool": "get_image",
+      "args": {
+        "views": [
+          "wrist",
+          "agentview_center"
+        ]
+      },
+      "reasoning": "I need wrist and center agent-view images to observe the current scene before I execute give_space.",
+      "image_paths": [
+        "images/traj_000000/10_wrist_agent_0.png",
+        "images/traj_000000/10_agentview_center_agent_0.png"
+      ]
+    },
+    {
+      "tool": "give_space",
+      "args": {
+        "fixture_id": "fridge"
+      },
+      "reasoning": "I am moving away from the fridge to allow agent_1 to approach it.",
+      "agent": "agent_0",
+      "step": 11
+    },
+    {
+      "step": 12,
+      "agent": "agent_0",
+      "tool": "get_image",
+      "args": {
+        "views": [
+          "wrist",
+          "agentview_center"
+        ]
+      },
+      "reasoning": "I need wrist and center agent-view images to observe the current scene after I executed give_space.",
+      "image_paths": [
+        "images/traj_000000/12_wrist_agent_0.png",
+        "images/traj_000000/12_agentview_center_agent_0.png"
+      ]
+    },
+    {
+      "tool": "communicate",
+      "args": {
+        "to": "agent_1",
+        "message": "The fridge is now free for you.",
+        "releases": "fridge"
+      },
+      "reasoning": "I am signaling to agent_1 that the fridge workspace is now accessible.",
+      "agent": "agent_0",
+      "step": 13
+    },
+    {
+      "step": 14,
+      "agent": "agent_1",
+      "tool": "get_image",
+      "args": {
+        "views": [
+          "agentview_center",
+          "agentview_left",
+          "agentview_right"
+        ]
+      },
+      "reasoning": "I need center agent-view, left agent-view, and right agent-view images to observe the current scene before I execute navigate_to_fixture.",
+      "image_paths": [
+        "images/traj_000000/14_agentview_center_agent_1.png",
+        "images/traj_000000/14_agentview_left_agent_1.png",
+        "images/traj_000000/14_agentview_right_agent_1.png"
+      ]
+    },
+    {
+      "tool": "communicate",
+      "args": {
+        "to": "agent_1",
+        "message": "I'll wait while you get the lemon."
+      },
+      "reasoning": "I am standing by while agent_1 retrieves the item.",
+      "agent": "agent_0",
+      "step": 15
+    },
+    {
+      "tool": "navigate_to_fixture",
+      "args": {
+        "fixture_id": "fridge"
+      },
+      "reasoning": "I am moving to the fridge to retrieve the lemon wedge now that it is free.",
+      "agent": "agent_1",
+      "step": 16
+    },
+    {
+      "step": 17,
+      "agent": "agent_1",
+      "tool": "get_image",
+      "args": {
+        "views": [
+          "agentview_center",
+          "agentview_left",
+          "agentview_right"
+        ]
+      },
+      "reasoning": "I need center agent-view, left agent-view, and right agent-view images to observe the current scene after I executed navigate_to_fixture.",
+      "image_paths": [
+        "images/traj_000000/17_agentview_center_agent_1.png",
+        "images/traj_000000/17_agentview_left_agent_1.png",
+        "images/traj_000000/17_agentview_right_agent_1.png"
+      ]
+    },
+    {
+      "step": 18,
+      "agent": "agent_1",
+      "tool": "get_image",
+      "args": {
+        "views": [
+          "wrist",
+          "agentview_center"
+        ]
+      },
+      "reasoning": "I need wrist and center agent-view images to observe the current scene before I execute pick_up_object.",
+      "image_paths": [
+        "images/traj_000000/18_wrist_agent_1.png",
+        "images/traj_000000/18_agentview_center_agent_1.png"
+      ]
+    },
+    {
+      "tool": "pick_up_object",
+      "args": {
+        "object_id": "lemon_wedge",
+        "source_id": "fridge"
+      },
+      "reasoning": "I am picking up the lemon wedge from the fridge.",
+      "agent": "agent_1",
+      "step": 19
+    },
+    {
+      "step": 20,
+      "agent": "agent_1",
+      "tool": "get_image",
+      "args": {
+        "views": [
+          "wrist",
+          "agentview_center"
+        ]
+      },
+      "reasoning": "I need wrist and center agent-view images to observe the current scene after I executed pick_up_object.",
+      "image_paths": [
+        "images/traj_000000/20_wrist_agent_1.png",
+        "images/traj_000000/20_agentview_center_agent_1.png"
+      ]
+    },
+    {
+      "step": 21,
+      "agent": "agent_1",
+      "tool": "get_image",
+      "args": {
+        "views": [
+          "agentview_center",
+          "agentview_left",
+          "agentview_right"
+        ]
+      },
+      "reasoning": "I need center agent-view, left agent-view, and right agent-view images to observe the current scene before I execute navigate_to_fixture.",
+      "image_paths": [
+        "images/traj_000000/21_agentview_center_agent_1.png",
+        "images/traj_000000/21_agentview_left_agent_1.png",
+        "images/traj_000000/21_agentview_right_agent_1.png"
+      ]
+    },
+    {
+      "tool": "navigate_to_fixture",
+      "args": {
+        "fixture_id": "dining_counter"
+      },
+      "reasoning": "I am moving back to the dining counter with the lemon wedge.",
+      "agent": "agent_1",
+      "step": 22
+    },
+    {
+      "step": 23,
+      "agent": "agent_1",
+      "tool": "get_image",
+      "args": {
+        "views": [
+          "agentview_center",
+          "agentview_left",
+          "agentview_right"
+        ]
+      },
+      "reasoning": "I need center agent-view, left agent-view, and right agent-view images to observe the current scene after I executed navigate_to_fixture.",
+      "image_paths": [
+        "images/traj_000000/23_agentview_center_agent_1.png",
+        "images/traj_000000/23_agentview_left_agent_1.png",
+        "images/traj_000000/23_agentview_right_agent_1.png"
+      ]
+    },
+    {
+      "step": 24,
+      "agent": "agent_1",
+      "tool": "get_image",
+      "args": {
+        "views": [
+          "wrist",
+          "agentview_center"
+        ]
+      },
+      "reasoning": "I need wrist and center agent-view images to observe the current scene before I execute place_on_object.",
+      "image_paths": [
+        "images/traj_000000/24_wrist_agent_1.png",
+        "images/traj_000000/24_agentview_center_agent_1.png"
+      ]
+    },
+    {
+      "tool": "place_on_object",
+      "args": {
+        "object_id": "lemon_wedge",
+        "support_object_id": "fish_plate"
+      },
+      "reasoning": "I am placing the lemon wedge on the fish plate to complete the task.",
+      "agent": "agent_1",
+      "step": 25
+    },
+    {
+      "step": 26,
+      "agent": "agent_1",
+      "tool": "get_image",
+      "args": {
+        "views": [
+          "wrist",
+          "agentview_center"
+        ]
+      },
+      "reasoning": "I need wrist and center agent-view images to observe the current scene after I executed place_on_object.",
+      "image_paths": [
+        "images/traj_000000/26_wrist_agent_1.png",
+        "images/traj_000000/26_agentview_center_agent_1.png"
+      ]
+    }
+  ],
+  "validation": {
+    "is_valid": true,
+    "checks": [
+      "initial_communication",
+      "allowed_tools",
+      "navigation_preconditions",
+      "manipulation_preconditions",
+      "effects",
+      "final_success",
+      "concurrent_replay"
+    ],
+    "final_state": {
+      "lemon_wedge_location": "fish_plate",
+      "fish_plate_location": "dining_counter",
+      "fish_location": "fish_plate",
+      "agents": {
+        "agent_0": {
+          "location": null,
+          "held_object": null
+        },
+        "agent_1": {
+          "location": "dining_counter",
+          "held_object": null
+        }
+      },
+      "objects": {
+        "lemon_wedge": {
+          "object_type": "lemon_wedge",
+          "location": "fish_plate"
+        },
+        "fish_plate": {
+          "object_type": "plate",
+          "location": "dining_counter"
+        },
+        "fish": {
+          "object_type": "fish",
+          "location": "fish_plate"
+        }
+      },
+      "fixtures": {
+        "fridge": {
+          "fixture_type": "fridge",
+          "parts": {
+            "door": {
+              "part_type": "hinged_part",
+              "state": "open"
+            }
+          }
+        },
+        "dining_counter": {
+          "fixture_type": "dining_counter"
+        }
+      },
+      "machine_state": {
+        "add_lemon_to_fish": {}
+      }
+    },
+    "signature": "e803efbb51996a48496ecdf6cfd3fa1f207822f11b8469aab0fd152b2b88388a",
+    "schedule": {
+      "lock_step": {
+        "makespan": 9.0,
+        "idle": {
+          "agent_0": 3.0,
+          "agent_1": 2.0
+        },
+        "goal_at": 8.0
+      }
+    }
+  },
+  "generation_usage": {
+    "successful_attempt_number": 1,
+    "prompt_tokens": 4129,
+    "cached_input_tokens": 0,
+    "output_tokens": 1106,
+    "reasoning_tokens": 9593,
+    "total_tokens": 14828,
+    "usage_source": "api_usage_metadata",
+    "traffic_type": "ON_DEMAND",
+    "observed_cost_usd": 0.0342,
+    "pricing": {
+      "model": "gemini-3-flash-preview",
+      "input_usd_per_million_tokens": 0.5,
+      "cached_input_usd_per_million_tokens": 0.05,
+      "output_usd_per_million_tokens": 3.0
+    }
+  },
+  "grounding_map": {
+    "version": 2,
+    "map_kind": "scene_agnostic",
+    "composite_task": "AddLemonToFish",
+    "symbols": {
+      "lemon_wedge": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "role": "lemon_wedge",
+        "preferred_fixture_types": [
+          "fridge"
+        ],
+        "object_type": "lemon_wedge",
+        "symbolic_location": "fridge"
+      },
+      "fish": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "role": "fish",
+        "preferred_fixture_types": [
+          "dining_counter"
+        ],
+        "object_type": "fish",
+        "symbolic_location": "fish_plate"
+      },
+      "fish_plate": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "role": "plate",
+        "preferred_fixture_types": [
+          "dining_counter"
+        ],
+        "object_type": "plate",
+        "symbolic_location": "dining_counter"
+      },
+      "fridge": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "role": "fridge",
+        "preferred_fixture_types": [
+          "fridge"
+        ],
+        "fixture_type": "fridge"
+      },
+      "dining_counter": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "role": "dining_counter",
+        "preferred_fixture_types": [
+          "dining_counter"
+        ],
+        "fixture_type": "dining_counter"
+      }
+    }
+  },
+  "tick_rows": [
+    {
+      "tick": 0,
+      "agent_0": {
+        "step": -1,
+        "agent": "agent_0",
+        "tool": "get_image",
+        "args": {
+          "views": [
+            "top_view",
+            "room_view",
+            "map"
+          ]
+        },
+        "reasoning": "I need top-view, room-view, and map images before the task begins."
+      },
+      "agent_1": {
+        "step": -1,
+        "agent": "agent_1",
+        "tool": "get_image",
+        "args": {
+          "views": [
+            "top_view",
+            "room_view",
+            "map"
+          ]
+        },
+        "reasoning": "I need top-view, room-view, and map images before the task begins."
+      }
+    },
+    {
+      "tick": 1,
+      "agent_0": {
+        "tool": "communicate",
+        "args": {
+          "to": "agent_1",
+          "message": "I will open the fridge door for you."
+        },
+        "reasoning": "I am coordinating with agent_1 to start the task by opening the fridge."
+      },
+      "agent_1": {
+        "tool": "communicate",
+        "args": {
+          "to": "agent_0",
+          "message": "I will wait for your signal before moving to the fridge."
+        },
+        "reasoning": "I am acknowledging agent_0's plan and preparing to wait for access to the fridge."
+      }
+    },
+    {
+      "tick": 2,
+      "agent_0": {
+        "step": -1,
+        "agent": "agent_0",
+        "tool": "get_image",
+        "args": {
+          "views": [
+            "wrist",
+            "agentview_center"
+          ]
+        },
+        "reasoning": "I need wrist and center agent-view images to observe the current scene before I execute open_hinged_part."
+      }
+    },
+    {
+      "tick": 3,
+      "agent_0": {
+        "tool": "open_hinged_part",
+        "args": {
+          "target_id": "fridge",
+          "part_id": "door"
+        },
+        "reasoning": "I am opening the fridge door to access the lemon for agent_1."
+      },
+      "agent_1": {
+        "tool": "communicate",
+        "args": {
+          "to": "agent_0",
+          "message": "Tell me when the fridge is free."
+        },
+        "reasoning": "I am asking agent_0 to notify me when the fridge workspace is available."
+      }
+    },
+    {
+      "tick": 4,
+      "agent_0": {
+        "step": -1,
+        "agent": "agent_0",
+        "tool": "get_image",
+        "args": {
+          "views": [
+            "wrist",
+            "agentview_center"
+          ]
+        },
+        "reasoning": "I need wrist and center agent-view images to observe the current scene after I executed open_hinged_part."
+      }
+    },
+    {
+      "tick": 5,
+      "agent_0": {
+        "tool": "communicate",
+        "args": {
+          "to": "agent_1",
+          "message": "I am about to step away from the fridge."
+        },
+        "reasoning": "I am informing agent_1 that I am finished with the fridge and will move shortly."
+      },
+      "agent_1": {
+        "tool": "wait_for_signal",
+        "args": {
+          "from": "agent_0",
+          "about": "fridge"
+        },
+        "reasoning": "I am blocking until agent_0 signals that the fridge is clear for me to use."
+      }
+    },
+    {
+      "tick": 6,
+      "agent_0": {
+        "step": -1,
+        "agent": "agent_0",
+        "tool": "get_image",
+        "args": {
+          "views": [
+            "wrist",
+            "agentview_center"
+          ]
+        },
+        "reasoning": "I need wrist and center agent-view images to observe the current scene before I execute give_space."
+      }
+    },
+    {
+      "tick": 7,
+      "agent_0": {
+        "tool": "give_space",
+        "args": {
+          "fixture_id": "fridge"
+        },
+        "reasoning": "I am moving away from the fridge to allow agent_1 to approach it."
+      }
+    },
+    {
+      "tick": 8,
+      "agent_0": {
+        "step": -1,
+        "agent": "agent_0",
+        "tool": "get_image",
+        "args": {
+          "views": [
+            "wrist",
+            "agentview_center"
+          ]
+        },
+        "reasoning": "I need wrist and center agent-view images to observe the current scene after I executed give_space."
+      }
+    },
+    {
+      "tick": 9,
+      "agent_0": {
+        "tool": "communicate",
+        "args": {
+          "to": "agent_1",
+          "message": "The fridge is now free for you.",
+          "releases": "fridge"
+        },
+        "reasoning": "I am signaling to agent_1 that the fridge workspace is now accessible."
+      }
+    },
+    {
+      "tick": 10,
+      "agent_1": {
+        "step": -1,
+        "agent": "agent_1",
+        "tool": "get_image",
+        "args": {
+          "views": [
+            "agentview_center",
+            "agentview_left",
+            "agentview_right"
+          ]
+        },
+        "reasoning": "I need center agent-view, left agent-view, and right agent-view images to observe the current scene before I execute navigate_to_fixture."
+      }
+    },
+    {
+      "tick": 11,
+      "agent_0": {
+        "tool": "communicate",
+        "args": {
+          "to": "agent_1",
+          "message": "I'll wait while you get the lemon."
+        },
+        "reasoning": "I am standing by while agent_1 retrieves the item."
+      },
+      "agent_1": {
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "fridge"
+        },
+        "reasoning": "I am moving to the fridge to retrieve the lemon wedge now that it is free."
+      }
+    },
+    {
+      "tick": 12,
+      "agent_1": {
+        "step": -1,
+        "agent": "agent_1",
+        "tool": "get_image",
+        "args": {
+          "views": [
+            "agentview_center",
+            "agentview_left",
+            "agentview_right"
+          ]
+        },
+        "reasoning": "I need center agent-view, left agent-view, and right agent-view images to observe the current scene after I executed navigate_to_fixture."
+      }
+    },
+    {
+      "tick": 13,
+      "agent_1": {
+        "step": -1,
+        "agent": "agent_1",
+        "tool": "get_image",
+        "args": {
+          "views": [
+            "wrist",
+            "agentview_center"
+          ]
+        },
+        "reasoning": "I need wrist and center agent-view images to observe the current scene before I execute pick_up_object."
+      }
+    },
+    {
+      "tick": 14,
+      "agent_1": {
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "lemon_wedge",
+          "source_id": "fridge"
+        },
+        "reasoning": "I am picking up the lemon wedge from the fridge."
+      }
+    },
+    {
+      "tick": 15,
+      "agent_1": {
+        "step": -1,
+        "agent": "agent_1",
+        "tool": "get_image",
+        "args": {
+          "views": [
+            "wrist",
+            "agentview_center"
+          ]
+        },
+        "reasoning": "I need wrist and center agent-view images to observe the current scene after I executed pick_up_object."
+      }
+    },
+    {
+      "tick": 16,
+      "agent_1": {
+        "step": -1,
+        "agent": "agent_1",
+        "tool": "get_image",
+        "args": {
+          "views": [
+            "agentview_center",
+            "agentview_left",
+            "agentview_right"
+          ]
+        },
+        "reasoning": "I need center agent-view, left agent-view, and right agent-view images to observe the current scene before I execute navigate_to_fixture."
+      }
+    },
+    {
+      "tick": 17,
+      "agent_1": {
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "dining_counter"
+        },
+        "reasoning": "I am moving back to the dining counter with the lemon wedge."
+      }
+    },
+    {
+      "tick": 18,
+      "agent_1": {
+        "step": -1,
+        "agent": "agent_1",
+        "tool": "get_image",
+        "args": {
+          "views": [
+            "agentview_center",
+            "agentview_left",
+            "agentview_right"
+          ]
+        },
+        "reasoning": "I need center agent-view, left agent-view, and right agent-view images to observe the current scene after I executed navigate_to_fixture."
+      }
+    },
+    {
+      "tick": 19,
+      "agent_1": {
+        "step": -1,
+        "agent": "agent_1",
+        "tool": "get_image",
+        "args": {
+          "views": [
+            "wrist",
+            "agentview_center"
+          ]
+        },
+        "reasoning": "I need wrist and center agent-view images to observe the current scene before I execute place_on_object."
+      }
+    },
+    {
+      "tick": 20,
+      "agent_1": {
+        "tool": "place_on_object",
+        "args": {
+          "object_id": "lemon_wedge",
+          "support_object_id": "fish_plate"
+        },
+        "reasoning": "I am placing the lemon wedge on the fish plate to complete the task."
+      }
+    },
+    {
+      "tick": 21,
+      "agent_1": {
+        "step": -1,
+        "agent": "agent_1",
+        "tool": "get_image",
+        "args": {
+          "views": [
+            "wrist",
+            "agentview_center"
+          ]
+        },
+        "reasoning": "I need wrist and center agent-view images to observe the current scene after I executed place_on_object."
+      }
+    }
+  ],
+  "task": "AddLemonToFish"
+}

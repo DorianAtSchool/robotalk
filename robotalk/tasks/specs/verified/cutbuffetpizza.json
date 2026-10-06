@@ -1,0 +1,317 @@
+{
+  "spec_version": 1,
+  "composite_task": "CutBuffetPizza",
+  "source_python_module": "robocasa.environments.kitchen.composite.arranging_buffet.cut_buffet_pizza",
+  "agent_ids": [
+    "agent_0",
+    "agent_1"
+  ],
+  "max_reasoning_chars": 200,
+  "validator_checks": [
+    "initial_communication",
+    "allowed_tools",
+    "navigation_preconditions",
+    "manipulation_preconditions",
+    "effects",
+    "final_success"
+  ],
+  "preflight_token_estimate": {
+    "prompt_tokens": 3000,
+    "output_tokens": 3500,
+    "reasoning_tokens": 0
+  },
+  "initial_state": {
+    "agents": {
+      "agent_0": {
+        "location": "drawer",
+        "held_object": null
+      },
+      "agent_1": {
+        "location": "dining_counter",
+        "held_object": null
+      }
+    },
+    "objects": {
+      "pizza_cutter": {
+        "object_type": "pizza_cutter",
+        "location": "drawer"
+      },
+      "pizza": {
+        "object_type": "pizza",
+        "location": "dining_counter"
+      }
+    },
+    "fixtures": {
+      "drawer": {
+        "fixture_type": "drawer",
+        "parts": {
+          "sliding": {
+            "part_type": "sliding_part",
+            "state": "closed"
+          }
+        },
+        "controls": {}
+      },
+      "dining_counter": {
+        "fixture_type": "dining_counter",
+        "parts": {},
+        "controls": {}
+      }
+    },
+    "machine_state": {
+      "cut_buffet_pizza": {}
+    }
+  },
+  "allowed_tool_specs": {
+    "communicate": {
+      "description": "Send a short coordination message to the other agent in the scene. args.to must be that agent's exact ID. Set args.releases to the exact symbolic id of a thing you have finished with and are handing over -- that, and only that, wakes a partner who is waiting on it. Omit args.releases from every other message. args.releases must be an object id or a fixture id that appears in initial_state, copied exactly. It names a THING, never an event or a status: 'coffee_machine' and 'mug' are ids; 'mug_placed', 'counter_free' and 'task_done' are not, and an id that does not exist releases nothing at all. coordination_phase is optional and must be omitted from ordinary messages. Use it only for the opening propose/await_plan/await_confirmation/confirm handshake or for portion_complete.",
+      "tool_args": [
+        "to",
+        "message"
+      ],
+      "optional_tool_args": [
+        "releases",
+        "coordination_phase"
+      ],
+      "tool_arg_types": {
+        "coordination_phase": "STRING"
+      },
+      "allowed_arg_values": {
+        "coordination_phase": [
+          "propose",
+          "await_plan",
+          "await_confirmation",
+          "confirm",
+          "portion_complete"
+        ]
+      }
+    },
+    "wait_for_signal": {
+      "description": "Pause until the other agent hands over what you are waiting for. args.about names that thing by its exact symbolic id -- an object id or a fixture id that appears in initial_state, copied exactly. It is a THING you are waiting FOR, never an event you are waiting ON: wait about='coffee_machine', never about='mug_placed' or 'your_turn'. An id that is not in initial_state can never be released, so the wait blocks forever and the whole plan is thrown away. You stay paused until args.from sends a communicate whose args.releases names the same id -- their other messages do not wake you, so you do not need to wait again after an unrelated one.",
+      "tool_args": [
+        "from",
+        "about"
+      ]
+    },
+    "navigate_to_fixture": {
+      "description": "Move the robot base to the working pose of a fixture.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "drawer",
+        "dining_counter"
+      ]
+    },
+    "open_sliding_part": {
+      "description": "Pull out a sliding drawer or rack on a fixture.",
+      "tool_args": [
+        "target_id",
+        "part_id"
+      ],
+      "allowed_target_ids": [
+        "drawer"
+      ],
+      "allowed_part_ids": [
+        "sliding"
+      ]
+    },
+    "pick_up_object": {
+      "description": "Grasp and lift an object from a symbolic source region.",
+      "tool_args": [
+        "object_id",
+        "source_id"
+      ],
+      "optional_tool_args": [
+        "source_site_id"
+      ],
+      "allowed_object_ids": [
+        "pizza_cutter"
+      ],
+      "allowed_source_ids": [
+        "drawer"
+      ]
+    },
+    "place_on_surface": {
+      "description": "Place an object onto an exposed support surface or attachment seat. Keep the fixture id in support_id or target_id and put the exact burner, rack, or other sub-location in target_site_id.",
+      "tool_args": [
+        "object_id"
+      ],
+      "tool_arg_any_of": [
+        [
+          "target_id",
+          "support_id"
+        ]
+      ],
+      "optional_tool_args": [
+        "target_id",
+        "support_id",
+        "target_site_id",
+        "relative_position"
+      ],
+      "allowed_object_ids": [
+        "pizza_cutter"
+      ],
+      "allowed_support_ids": [
+        "dining_counter"
+      ]
+    },
+    "give_space": {
+      "description": "Yield working room at a fixture so the other agent can complete an action there.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "drawer",
+        "dining_counter"
+      ]
+    }
+  },
+  "task_goal": "Take the pizza cutter from the drawer and place it on the dining counter for cutting.",
+  "extra_execution_rules": [
+    "The pizza must remain on the dining counter."
+  ],
+  "initial_public_state": {
+    "pizza_cutter_location": "drawer",
+    "pizza_location": "dining_counter"
+  },
+  "task_preconditions": [
+    {
+      "kind": "fixture_part_state_required_for_pickup",
+      "tool": "pick_up_object",
+      "source_id": "drawer",
+      "fixture_id": "drawer",
+      "part_id": "sliding",
+      "required_state": "open",
+      "message": "The drawer must be open to retrieve the pizza cutter."
+    },
+    {
+      "kind": "object_must_remain_at_location",
+      "object_id": "pizza",
+      "location": "dining_counter",
+      "message": "The pizza must stay on the dining counter."
+    }
+  ],
+  "goal_conditions": [
+    {
+      "kind": "object_at_location",
+      "object_id": "pizza_cutter",
+      "location": "dining_counter",
+      "machine_path": null
+    },
+    {
+      "kind": "object_at_location",
+      "object_id": "pizza",
+      "location": "dining_counter",
+      "machine_path": null
+    }
+  ],
+  "task_effects": [],
+  "grounding": {
+    "legacy_symbol_aliases": {},
+    "symbols": {
+      "pizza_cutter": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "pizza_cutter"
+      },
+      "pizza": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "pizza"
+      },
+      "drawer": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "object_id": "pizza_cutter",
+        "fixture_type": "drawer"
+      },
+      "dining_counter": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "fixture_type": "dining_counter"
+      }
+    }
+  },
+  "example_trajectory": {
+    "agents": [
+      {
+        "agent": "agent_0"
+      },
+      {
+        "agent": "agent_1"
+      }
+    ],
+    "steps": [
+      {
+        "step": 0,
+        "agent": "agent_0",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_1",
+          "message": "I will get the pizza cutter from the drawer."
+        },
+        "reasoning": "I am starting the task by coordinating with agent_1."
+      },
+      {
+        "step": 1,
+        "agent": "agent_1",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_0",
+          "message": "I will clear space on the dining counter."
+        },
+        "reasoning": "I am acknowledging and preparing the target surface."
+      },
+      {
+        "step": 2,
+        "agent": "agent_0",
+        "tool": "open_sliding_part",
+        "args": {
+          "target_id": "drawer",
+          "part_id": "sliding"
+        },
+        "reasoning": "I need to open the drawer to access the pizza cutter."
+      },
+      {
+        "step": 3,
+        "agent": "agent_0",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "pizza_cutter",
+          "source_id": "drawer"
+        },
+        "reasoning": "Picking up the pizza cutter."
+      },
+      {
+        "step": 4,
+        "agent": "agent_1",
+        "tool": "give_space",
+        "args": {
+          "fixture_id": "dining_counter"
+        },
+        "reasoning": "Making room for agent_0 to place the cutter."
+      },
+      {
+        "step": 5,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "dining_counter"
+        },
+        "reasoning": "Moving to the dining counter to place the cutter."
+      },
+      {
+        "step": 6,
+        "agent": "agent_0",
+        "tool": "place_on_surface",
+        "args": {
+          "object_id": "pizza_cutter",
+          "support_id": "dining_counter"
+        },
+        "reasoning": "Placing the pizza cutter on the counter near the pizza."
+      }
+    ]
+  },
+  "notes": []
+}

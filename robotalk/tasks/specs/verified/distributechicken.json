@@ -1,0 +1,370 @@
+{
+  "spec_version": 1,
+  "composite_task": "DistributeChicken",
+  "source_python_module": "robocasa.environments.kitchen.composite.portioning_meals.distribute_chicken",
+  "agent_ids": [
+    "agent_0",
+    "agent_1"
+  ],
+  "max_reasoning_chars": 200,
+  "validator_checks": [
+    "initial_communication",
+    "allowed_tools",
+    "navigation_preconditions",
+    "manipulation_preconditions",
+    "effects",
+    "final_success"
+  ],
+  "preflight_token_estimate": {
+    "prompt_tokens": 3000,
+    "output_tokens": 3500,
+    "reasoning_tokens": 0
+  },
+  "initial_state": {
+    "agents": {
+      "agent_0": {
+        "location": "stove",
+        "held_object": null
+      },
+      "agent_1": {
+        "location": "dining_counter",
+        "held_object": null
+      }
+    },
+    "objects": {
+      "pan": {
+        "object_type": "pan",
+        "location": "stove"
+      },
+      "plate1": {
+        "object_type": "plate",
+        "location": "dining_counter"
+      },
+      "plate2": {
+        "object_type": "plate",
+        "location": "dining_counter"
+      },
+      "chicken_drumstick1": {
+        "object_type": "chicken_drumstick",
+        "location": "pan"
+      },
+      "chicken_drumstick2": {
+        "object_type": "chicken_drumstick",
+        "location": "pan"
+      }
+    },
+    "fixtures": {
+      "stove": {
+        "fixture_type": "stove",
+        "parts": {},
+        "controls": {}
+      },
+      "dining_counter": {
+        "fixture_type": "dining_counter",
+        "parts": {},
+        "controls": {}
+      }
+    },
+    "machine_state": {
+      "distribute_chicken": {}
+    }
+  },
+  "allowed_tool_specs": {
+    "communicate": {
+      "description": "Send a short coordination message to the other agent in the scene. args.to must be that agent's exact ID. Set args.releases to the exact symbolic id of a thing you have finished with and are handing over -- that, and only that, wakes a partner who is waiting on it. Omit args.releases from every other message. args.releases must be an object id or a fixture id that appears in initial_state, copied exactly. It names a THING, never an event or a status: 'coffee_machine' and 'mug' are ids; 'mug_placed', 'counter_free' and 'task_done' are not, and an id that does not exist releases nothing at all. coordination_phase is optional and must be omitted from ordinary messages. Use it only for the opening propose/await_plan/await_confirmation/confirm handshake or for portion_complete.",
+      "tool_args": [
+        "to",
+        "message"
+      ],
+      "optional_tool_args": [
+        "releases",
+        "coordination_phase"
+      ],
+      "tool_arg_types": {
+        "coordination_phase": "STRING"
+      },
+      "allowed_arg_values": {
+        "coordination_phase": [
+          "propose",
+          "await_plan",
+          "await_confirmation",
+          "confirm",
+          "portion_complete"
+        ]
+      }
+    },
+    "wait_for_signal": {
+      "description": "Pause until the other agent hands over what you are waiting for. args.about names that thing by its exact symbolic id -- an object id or a fixture id that appears in initial_state, copied exactly. It is a THING you are waiting FOR, never an event you are waiting ON: wait about='coffee_machine', never about='mug_placed' or 'your_turn'. An id that is not in initial_state can never be released, so the wait blocks forever and the whole plan is thrown away. You stay paused until args.from sends a communicate whose args.releases names the same id -- their other messages do not wake you, so you do not need to wait again after an unrelated one.",
+      "tool_args": [
+        "from",
+        "about"
+      ]
+    },
+    "navigate_to_fixture": {
+      "description": "Move the robot base to the working pose of a fixture.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "stove",
+        "dining_counter"
+      ]
+    },
+    "pick_up_object": {
+      "description": "Grasp and lift an object from a symbolic source region.",
+      "tool_args": [
+        "object_id",
+        "source_id"
+      ],
+      "optional_tool_args": [
+        "source_site_id"
+      ],
+      "allowed_object_ids": [
+        "chicken_drumstick1",
+        "chicken_drumstick2"
+      ],
+      "allowed_source_ids": [
+        "pan"
+      ]
+    },
+    "place_on_object": {
+      "description": "Place an object on top of another movable support object such as a plate or cutting_board.",
+      "tool_args": [
+        "object_id"
+      ],
+      "tool_arg_any_of": [
+        [
+          "target_id",
+          "support_object_id"
+        ]
+      ],
+      "optional_tool_args": [
+        "target_id",
+        "relative_position"
+      ],
+      "allowed_object_ids": [
+        "chicken_drumstick1",
+        "chicken_drumstick2"
+      ],
+      "allowed_support_object_ids": [
+        "plate1",
+        "plate2"
+      ]
+    },
+    "give_space": {
+      "description": "Yield working room at a fixture so the other agent can complete an action there.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "stove",
+        "dining_counter"
+      ]
+    }
+  },
+  "task_goal": "Take the chicken drumsticks from the pan and place one on each plate on the dining counter.",
+  "extra_execution_rules": [
+    "Each plate must contain exactly one chicken drumstick."
+  ],
+  "initial_public_state": {
+    "chicken_drumstick1_location": "pan",
+    "chicken_drumstick2_location": "pan",
+    "plate1_location": "dining_counter",
+    "plate2_location": "dining_counter"
+  },
+  "task_preconditions": [
+    {
+      "kind": "object_must_remain_at_location",
+      "object_id": "plate1",
+      "location": "dining_counter",
+      "message": "The first plate must stay on the dining counter."
+    },
+    {
+      "kind": "object_must_remain_at_location",
+      "object_id": "plate2",
+      "location": "dining_counter",
+      "message": "The second plate must stay on the dining counter."
+    }
+  ],
+  "goal_conditions": [
+    {
+      "kind": "object_count_at_location",
+      "object_ids": [
+        "chicken_drumstick1",
+        "chicken_drumstick2"
+      ],
+      "location": "plate1",
+      "count": 1,
+      "machine_path": null
+    },
+    {
+      "kind": "object_count_at_location",
+      "object_ids": [
+        "chicken_drumstick1",
+        "chicken_drumstick2"
+      ],
+      "location": "plate2",
+      "count": 1,
+      "machine_path": null
+    }
+  ],
+  "task_effects": [],
+  "grounding": {
+    "legacy_symbol_aliases": {},
+    "symbols": {
+      "pan": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "pan"
+      },
+      "plate1": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "plate"
+      },
+      "plate2": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "plate"
+      },
+      "chicken_drumstick1": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "chicken_drumstick"
+      },
+      "chicken_drumstick2": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "chicken_drumstick"
+      },
+      "stove": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "fixture_type": "stove"
+      },
+      "dining_counter": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "fixture_type": "dining_counter"
+      }
+    }
+  },
+  "example_trajectory": {
+    "agents": [
+      {
+        "agent": "agent_0"
+      },
+      {
+        "agent": "agent_1"
+      }
+    ],
+    "steps": [
+      {
+        "step": 0,
+        "agent": "agent_0",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_1",
+          "message": "I will take the first drumstick to plate 1."
+        },
+        "reasoning": "Coordinating the distribution of chicken."
+      },
+      {
+        "step": 1,
+        "agent": "agent_1",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_0",
+          "message": "I will take the second drumstick to plate 2."
+        },
+        "reasoning": "Acknowledging the plan."
+      },
+      {
+        "step": 2,
+        "agent": "agent_0",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "chicken_drumstick1",
+          "source_id": "pan"
+        },
+        "reasoning": "Picking up the first drumstick from the pan."
+      },
+      {
+        "step": 3,
+        "agent": "agent_1",
+        "tool": "give_space",
+        "args": {
+          "fixture_id": "dining_counter"
+        },
+        "reasoning": "Clearing a shared fixture already occupied by this agent before the other agent uses it."
+      },
+      {
+        "step": 4,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "dining_counter"
+        },
+        "reasoning": "Moving to the dining counter to place the drumstick."
+      },
+      {
+        "step": 5,
+        "agent": "agent_0",
+        "tool": "place_on_object",
+        "args": {
+          "object_id": "chicken_drumstick1",
+          "support_object_id": "plate1"
+        },
+        "reasoning": "Placing the first drumstick on the first plate."
+      },
+      {
+        "step": 6,
+        "agent": "agent_0",
+        "tool": "give_space",
+        "args": {
+          "fixture_id": "dining_counter"
+        },
+        "reasoning": "Clearing space for agent_1 to approach the dining counter."
+      },
+      {
+        "step": 7,
+        "agent": "agent_1",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "stove"
+        },
+        "reasoning": "Moving to the stove to get the second drumstick."
+      },
+      {
+        "step": 8,
+        "agent": "agent_1",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "chicken_drumstick2",
+          "source_id": "pan"
+        },
+        "reasoning": "Picking up the second drumstick."
+      },
+      {
+        "step": 9,
+        "agent": "agent_1",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "dining_counter"
+        },
+        "reasoning": "Moving to the dining counter."
+      },
+      {
+        "step": 10,
+        "agent": "agent_1",
+        "tool": "place_on_object",
+        "args": {
+          "object_id": "chicken_drumstick2",
+          "support_object_id": "plate2"
+        },
+        "reasoning": "Placing the second drumstick on the second plate."
+      }
+    ]
+  },
+  "notes": []
+}

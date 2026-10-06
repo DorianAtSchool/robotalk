@@ -1,0 +1,30 @@
+RoboTalk prompt contract
+
+The prompt has shared rules plus episode- and turn-specific fields. It is not one identical text string for every row.
+
+DEMONSTRATION GENERATION
+
+The generator is asked to simulate two cooperative robots and produce one trajectory as simultaneous ticks. The shared contract requires:
+
+1. Every unblocked agent receives exactly one tool-call target per tick. A blocked marker is valid only after wait_for_signal.
+2. A sampled coordinator proposes a concrete division of work on communication tick 0. The partner awaits the plan. On communication tick 1, the coordinator awaits confirmation and the partner confirms. Physical work begins afterward.
+3. Plans and calls use exact symbolic IDs from the initial state.
+4. Agents navigate before acting at a fixture, hold at most one object, and preserve legal object ownership and placement.
+5. Concurrent ticks are atomic. Same-object and exclusive-workspace conflicts are forbidden. A give_space handover becomes effective on the following tick.
+6. Before wait_for_signal, the agent visibly communicates the exact matching release keyword. The private wait call follows immediately. A waiter resumes on the tick after a matching release.
+7. Agents report only their own portion complete. They never announce global completion; the shared FSM terminates the trajectory when its goal is satisfied.
+8. Calls use the declared tools, exact argument schemas, and one short first-person rationale. Generation output is JSON only.
+
+The demonstration prompt also inserts the task goal, initial state, initial agent positions, concurrency facts, task-specific facts, placement guidance, tool contracts, coordinator, and generation variation key.
+
+SFT AND LIVE EVALUATION
+
+System prompt:
+You are a robot task planner. Predict exactly one next tool call for the current acting agent. Request the camera views you need before an action by calling get_image. Use images only as scene context. Do not output image paths or describe the images.
+
+The user prompt inserts the task family and instruction, current acting agent, coordinator, attached observation views, symbolic initial state, concurrency facts, that agent's private executed-action history, camera rules, communication protocol, workspace rules, and tool schemas supplied as function definitions.
+
+SFT and live evaluation use the same canonical prompt builder. No local or global step index is included.
+
+Prompt contract version:
+state_grounded_global_tools_no_index_v9_unambiguous_garnish_cake_goal

@@ -1,0 +1,853 @@
+{
+ "note": "sha256[:16] of (generation prompt, SFT/eval first-turn prompt) per task/run_index, recorded from the code that produced the paper results",
+ "prompts": {
+  "AddLemonToFish/0": [
+   "0f77e617404961b4",
+   "240ada869e4331ed"
+  ],
+  "AddLemonToFish/1": [
+   "6e56048d0599d460",
+   "65c3db7223491aa9"
+  ],
+  "AddLemonToFish/23": [
+   "15b26dbb72431b86",
+   "e7094c713f4ddf3b"
+  ],
+  "AddLemonToFish/7": [
+   "475ae5306d196030",
+   "acaed0552f864e85"
+  ],
+  "AddSugarCubes/0": [
+   "33b216c29c1ea8b1",
+   "6e80afca31283dcd"
+  ],
+  "AddSugarCubes/1": [
+   "62ce9a9368cb24ff",
+   "756e22a921476a19"
+  ],
+  "AddSugarCubes/23": [
+   "20ca53f1e4324759",
+   "756e22a921476a19"
+  ],
+  "AddSugarCubes/7": [
+   "1bdaf564cb229a64",
+   "756e22a921476a19"
+  ],
+  "AlcoholServingPrep/0": [
+   "5d7b2838bc26a5db",
+   "dc373e29aecc067c"
+  ],
+  "AlcoholServingPrep/1": [
+   "f6c3cff3aabe80f5",
+   "34857aac62df3f94"
+  ],
+  "AlcoholServingPrep/23": [
+   "46d7b6c9d53f5abe",
+   "d984e3f25f462cf4"
+  ],
+  "AlcoholServingPrep/7": [
+   "b7ca94ef1b83f95d",
+   "ee241b0fa0cf674d"
+  ],
+  "AlignSilverware/0": [
+   "c2f053f5826517eb",
+   "bbb3ec06e2201871"
+  ],
+  "AlignSilverware/1": [
+   "62c5b05b2e9c8860",
+   "6aa6645cb0c1c303"
+  ],
+  "AlignSilverware/23": [
+   "22e6bd50aeb4d0aa",
+   "01340cff51fa9912"
+  ],
+  "AlignSilverware/7": [
+   "3ba03a88001355df",
+   "01340cff51fa9912"
+  ],
+  "ArrangeBreadBowl/0": [
+   "4b1221ec689f1a64",
+   "ab28df20f59b2a04"
+  ],
+  "ArrangeBreadBowl/1": [
+   "2ffc4befb7c0cd03",
+   "0ee77ac12dcb1038"
+  ],
+  "ArrangeBreadBowl/23": [
+   "9ce0d1a7acb73bfa",
+   "2ad3ed9a83893982"
+  ],
+  "ArrangeBreadBowl/7": [
+   "ea0ec185db52cc97",
+   "2ad3ed9a83893982"
+  ],
+  "ArrangeDrinkware/0": [
+   "cf3f217a157d9b48",
+   "ed6aee1047fba8a9"
+  ],
+  "ArrangeDrinkware/1": [
+   "9a6edecd55c7dc7f",
+   "221a056a9a2f3595"
+  ],
+  "ArrangeDrinkware/23": [
+   "4aa80a6c4b3eabf4",
+   "88ab50a7d10aa279"
+  ],
+  "ArrangeDrinkware/7": [
+   "43d4ccae64140039",
+   "88ab50a7d10aa279"
+  ],
+  "ArrangeTea/0": [
+   "fd7d84f1004de648",
+   "61631f9c09d2d427"
+  ],
+  "ArrangeTea/1": [
+   "c8032affa25f2408",
+   "b81ddc671534e3ab"
+  ],
+  "ArrangeTea/23": [
+   "768db87dd7f9ce1e",
+   "0c39339a6072e3d5"
+  ],
+  "ArrangeTea/7": [
+   "03a597831e23da63",
+   "0c39339a6072e3d5"
+  ],
+  "BeverageOrganization/0": [
+   "5e0b9fefcacb32db",
+   "efb6ea2e311f947e"
+  ],
+  "BeverageOrganization/1": [
+   "d90a7f536d13fabd",
+   "a7a2ef513a0ffb82"
+  ],
+  "BeverageOrganization/23": [
+   "2e514226dd749f91",
+   "419c804f6072d039"
+  ],
+  "BeverageOrganization/7": [
+   "680862d8da3a5e12",
+   "419c804f6072d039"
+  ],
+  "BowlAndCup/0": [
+   "c093e9150ba8d9f4",
+   "5be578b2cf9f69c4"
+  ],
+  "BowlAndCup/1": [
+   "614b077e7738c4e7",
+   "1643a84757032aba"
+  ],
+  "BowlAndCup/23": [
+   "b50cdb71e897b46c",
+   "ca090bf3956bdcb1"
+  ],
+  "BowlAndCup/7": [
+   "d2fe55cc5c8ed728",
+   "ca090bf3956bdcb1"
+  ],
+  "CandleCleanup/0": [
+   "cf03256454287215",
+   "33dab8ea75437915"
+  ],
+  "CandleCleanup/1": [
+   "c1eb36464e7f7f56",
+   "aa4fae71d5568e58"
+  ],
+  "CandleCleanup/23": [
+   "a88dffc1be7bd8dc",
+   "ea7680793662e10f"
+  ],
+  "CandleCleanup/7": [
+   "7e27f15a61dd1c7c",
+   "ea7680793662e10f"
+  ],
+  "CheeseMixing/0": [
+   "43ac1df0acf45dfa",
+   "1004d9934f65f4ed"
+  ],
+  "CheeseMixing/1": [
+   "961a0760f3fcf3e5",
+   "fea0412e041e9d35"
+  ],
+  "CheeseMixing/23": [
+   "3f9a24fdcdb39230",
+   "d15b3990fe924791"
+  ],
+  "CheeseMixing/7": [
+   "5801c9d22b8b320a",
+   "fea0412e041e9d35"
+  ],
+  "ClusterItemsForClearing/0": [
+   "87694ec5c26963e6",
+   "ca61bc150cdb7dee"
+  ],
+  "ClusterItemsForClearing/1": [
+   "06c1b880548e63ef",
+   "1da3dfc4ea69de7f"
+  ],
+  "ClusterItemsForClearing/23": [
+   "9bd9996070519b42",
+   "1da3dfc4ea69de7f"
+  ],
+  "ClusterItemsForClearing/7": [
+   "215f13a7bea55be9",
+   "1da3dfc4ea69de7f"
+  ],
+  "ColorfulSalsa/0": [
+   "63b8cdda5f81330f",
+   "7f39c2bf6faec993"
+  ],
+  "ColorfulSalsa/1": [
+   "a005fce335382721",
+   "1ded7db7be4a077f"
+  ],
+  "ColorfulSalsa/23": [
+   "20d3a566f5c5e549",
+   "1ded7db7be4a077f"
+  ],
+  "ColorfulSalsa/7": [
+   "f3ac1c42a9839e51",
+   "1ded7db7be4a077f"
+  ],
+  "CondimentCollection/0": [
+   "9383982ee1a7cbb8",
+   "35a20e169fa0e43f"
+  ],
+  "CondimentCollection/1": [
+   "b3633bfd18cde56a",
+   "9074cd84685605cc"
+  ],
+  "CondimentCollection/23": [
+   "91a822840ecf8cec",
+   "8b4a972ece9258ff"
+  ],
+  "CondimentCollection/7": [
+   "29ca83ae648eb3c5",
+   "8b4a972ece9258ff"
+  ],
+  "CutBuffetPizza/0": [
+   "a689a607484edc3f",
+   "f69459202af21237"
+  ],
+  "CutBuffetPizza/1": [
+   "f1b4a78d06ff1315",
+   "ab3ee197ff40982c"
+  ],
+  "CutBuffetPizza/23": [
+   "0b1527ecab484cf1",
+   "56c97af3206dc521"
+  ],
+  "CutBuffetPizza/7": [
+   "c5507114ed796199",
+   "a65fb7416a456d5b"
+  ],
+  "DateNight/0": [
+   "cc116ba24f223d1f",
+   "ef47e632fe3cfdc5"
+  ],
+  "DateNight/1": [
+   "8fff3cebab8831b8",
+   "d1cdcd5964573aba"
+  ],
+  "DateNight/23": [
+   "cfdadb74f50dd165",
+   "2f5e68c552219eed"
+  ],
+  "DateNight/7": [
+   "415103e31ade6b8e",
+   "2f5e68c552219eed"
+  ],
+  "DeliverStraw/0": [
+   "19ddbd7b344f6dd4",
+   "5d87e245b1889e68"
+  ],
+  "DeliverStraw/1": [
+   "0ec478ea7afaf01b",
+   "87c03f42bcf013b8"
+  ],
+  "DeliverStraw/23": [
+   "28710450101a62a8",
+   "42abeb9d9a2280d1"
+  ],
+  "DeliverStraw/7": [
+   "1f896eee12a279ce",
+   "0d0cc513c7a36e6c"
+  ],
+  "DessertAssembly/0": [
+   "a6eb20eca8fa4365",
+   "42a2c0386c3fdd1e"
+  ],
+  "DessertAssembly/1": [
+   "261f5cf1231dd6f8",
+   "5f389fe56a351861"
+  ],
+  "DessertAssembly/23": [
+   "c5d829a68b3e91fc",
+   "5f389fe56a351861"
+  ],
+  "DessertAssembly/7": [
+   "ed59e1adf9012867",
+   "5f389fe56a351861"
+  ],
+  "DisplayMeatVariety/0": [
+   "636ad81bcc501a98",
+   "347988c42d5b4ca1"
+  ],
+  "DisplayMeatVariety/1": [
+   "d0f36ad178b5d877",
+   "df18965d4a168a04"
+  ],
+  "DisplayMeatVariety/23": [
+   "0c94888951df28d9",
+   "9fb53613178c38f7"
+  ],
+  "DisplayMeatVariety/7": [
+   "8251447cc55ce0b7",
+   "8089c012f9f72bfa"
+  ],
+  "DistributeChicken/0": [
+   "888b21821ac9e96b",
+   "2803115e2c4e9ce3"
+  ],
+  "DistributeChicken/1": [
+   "574ccae1f8397831",
+   "7911c35366e1e1d4"
+  ],
+  "DistributeChicken/23": [
+   "6d1e9fccf57dce7f",
+   "fd0ba4eb0bbf82ef"
+  ],
+  "DistributeChicken/7": [
+   "82ddfb87fdd3086d",
+   "7911c35366e1e1d4"
+  ],
+  "GarnishCake/0": [
+   "d6688e7fc96ca749",
+   "c3df23b712e283a9"
+  ],
+  "GarnishCake/1": [
+   "3bb4714e73af87c4",
+   "e490ef0433268c5e"
+  ],
+  "GarnishCake/23": [
+   "27acff0d392f35f5",
+   "e490ef0433268c5e"
+  ],
+  "GarnishCake/7": [
+   "9832063f6e972a6a",
+   "e490ef0433268c5e"
+  ],
+  "GarnishCupcake/0": [
+   "6af713c53f5845c4",
+   "0534c2eb46611814"
+  ],
+  "GarnishCupcake/1": [
+   "8ab06e74aa731cc0",
+   "ab65406ec6265432"
+  ],
+  "GarnishCupcake/23": [
+   "4423264c33c86bc8",
+   "73fb12cf68761d53"
+  ],
+  "GarnishCupcake/7": [
+   "d8661dca8ba257ca",
+   "73fb12cf68761d53"
+  ],
+  "GarnishPancake/0": [
+   "230e715e8d764416",
+   "48e254775d2fc731"
+  ],
+  "GarnishPancake/1": [
+   "7495e30396d7f3b5",
+   "786d3b8239eaae30"
+  ],
+  "GarnishPancake/23": [
+   "db381aeefe7fe844",
+   "e8e9fc47b935a2dd"
+  ],
+  "GarnishPancake/7": [
+   "acab5876047b3e5f",
+   "b51da305efa095c7"
+  ],
+  "GatherMarinadeIngredients/0": [
+   "f93e8878d92f16e8",
+   "a301a306e6c84882"
+  ],
+  "GatherMarinadeIngredients/1": [
+   "016d008bf9b23555",
+   "d6cb98e699569322"
+  ],
+  "GatherMarinadeIngredients/23": [
+   "fd0b5ec567be005e",
+   "b14d2b10639ce044"
+  ],
+  "GatherMarinadeIngredients/7": [
+   "69eed91995bacda6",
+   "fa3c98f4caf9fd82"
+  ],
+  "HotDogSetup/0": [
+   "0901ab445d0468dc",
+   "75e839712b4bbf18"
+  ],
+  "HotDogSetup/1": [
+   "ba209ac459715a9c",
+   "1c54c9d2a7474135"
+  ],
+  "HotDogSetup/23": [
+   "7b8d28dd873adcc7",
+   "ea191b81892820ed"
+  ],
+  "HotDogSetup/7": [
+   "da31cdd5bdc0b50a",
+   "b0d1427215e57f7e"
+  ],
+  "LemonSeasoningFish/0": [
+   "531a528ff0127a52",
+   "23a9fe5acd4fa5f3"
+  ],
+  "LemonSeasoningFish/1": [
+   "0cd07b00c5e354a1",
+   "de6c2b557e56abf1"
+  ],
+  "LemonSeasoningFish/23": [
+   "f3e106f73f806496",
+   "5dc6e205cc48ed45"
+  ],
+  "LemonSeasoningFish/7": [
+   "821a3f47ae80845f",
+   "c80d631c3d8685dc"
+  ],
+  "LineUpCondiments/0": [
+   "25c393e1d066596c",
+   "64e11e4f7ce0e61a"
+  ],
+  "LineUpCondiments/1": [
+   "af23a5816ba44833",
+   "e8c76358c0146de5"
+  ],
+  "LineUpCondiments/23": [
+   "31a1c13ceed1d7cf",
+   "df1094cd6229ba10"
+  ],
+  "LineUpCondiments/7": [
+   "7357ad43b7cc1809",
+   "4629348c31ad448c"
+  ],
+  "MatchCupAndDrink/0": [
+   "b778dc7b26240b89",
+   "92ceb986eef49ccc"
+  ],
+  "MatchCupAndDrink/1": [
+   "a4c60181e3fc01ef",
+   "acdfa30bdf57e12c"
+  ],
+  "MatchCupAndDrink/23": [
+   "7ec7681262b04d28",
+   "be70a71ee7070f22"
+  ],
+  "MatchCupAndDrink/7": [
+   "0ca82ce11d1c5ea4",
+   "be70a71ee7070f22"
+  ],
+  "MeatSkewerAssembly/0": [
+   "dc8e413b6b6f9da0",
+   "b0e546bc7d9e79e9"
+  ],
+  "MeatSkewerAssembly/1": [
+   "f514bdb424b1447f",
+   "5fa56134cab83f2b"
+  ],
+  "MeatSkewerAssembly/23": [
+   "ffd4b2bd20bc3e58",
+   "5fa56134cab83f2b"
+  ],
+  "MeatSkewerAssembly/7": [
+   "597241330edecde2",
+   "5fa56134cab83f2b"
+  ],
+  "OrganizeCondiments/0": [
+   "680ac8f6a0e477a1",
+   "cfb9c94ab82acc3d"
+  ],
+  "OrganizeCondiments/1": [
+   "26c4a9170e80fe59",
+   "78a6c6dfee4519b4"
+  ],
+  "OrganizeCondiments/23": [
+   "1be141c2631c5e5b",
+   "ef8b214d91b0b49d"
+  ],
+  "OrganizeCondiments/7": [
+   "146b5550bce1699f",
+   "ef8b214d91b0b49d"
+  ],
+  "PlateStoreDinner/0": [
+   "61b5a60ff0e0386a",
+   "34fddd3595e73ee2"
+  ],
+  "PlateStoreDinner/1": [
+   "b810b0a9c0f0dd1b",
+   "eec51d804c8eb7c6"
+  ],
+  "PlateStoreDinner/23": [
+   "d0fea348eb4c534f",
+   "4e0dc97612486ec0"
+  ],
+  "PlateStoreDinner/7": [
+   "53632d8f620ffb21",
+   "08e44e7f2ffd722f"
+  ],
+  "PortionHotDogs/0": [
+   "aea60e2e38f36712",
+   "4db55d07a5626ddc"
+  ],
+  "PortionHotDogs/1": [
+   "1ce073f49df25640",
+   "d8b6d8954c7de472"
+  ],
+  "PortionHotDogs/23": [
+   "f9f55c0ad7493192",
+   "d8b6d8954c7de472"
+  ],
+  "PortionHotDogs/7": [
+   "671cdab7ccdc4d08",
+   "d8b6d8954c7de472"
+  ],
+  "PortionYogurt/0": [
+   "a8bbb88084557081",
+   "3f868e2e7d7850ba"
+  ],
+  "PortionYogurt/1": [
+   "faa250d93fdf7ecf",
+   "bf411d9a1432a49c"
+  ],
+  "PortionYogurt/23": [
+   "b15fdb304fb030ae",
+   "bf411d9a1432a49c"
+  ],
+  "PortionYogurt/7": [
+   "3294e2aad934f560",
+   "bf411d9a1432a49c"
+  ],
+  "PrepareCheeseStation/0": [
+   "201300b0d4db5a24",
+   "a322885c63b87568"
+  ],
+  "PrepareCheeseStation/1": [
+   "f958c6c47adf79e7",
+   "b1f1bd13e9361703"
+  ],
+  "PrepareCheeseStation/23": [
+   "8736131fcaa44e53",
+   "ab63b8220590b6cb"
+  ],
+  "PrepareCheeseStation/7": [
+   "ca89ba668adca684",
+   "e8ef0080f0e88a89"
+  ],
+  "PrepareCocktailStation/0": [
+   "160216d9fd2b1940",
+   "e81f1fb4a2ba59fb"
+  ],
+  "PrepareCocktailStation/1": [
+   "af2ce1d9afa69474",
+   "f630aa4ca926afd3"
+  ],
+  "PrepareCocktailStation/23": [
+   "8d925b4772f1be5d",
+   "98346e8358e171e3"
+  ],
+  "PrepareCocktailStation/7": [
+   "0018d04c747d99a1",
+   "cc20aba69517ebef"
+  ],
+  "PrepareCoffee/0": [
+   "0470a75bce7a2610",
+   "fffcda54326ef3ab"
+  ],
+  "PrepareCoffee/1": [
+   "1f6988dbcd624188",
+   "1c516c376f9abf99"
+  ],
+  "PrepareCoffee/23": [
+   "9c673bccc88cc3e1",
+   "741e7ea9f9d7f5c6"
+  ],
+  "PrepareCoffee/7": [
+   "61b42a6ce46fe848",
+   "da78cb4a11eb0823"
+  ],
+  "PrepareDrinkStation/0": [
+   "e203276a5f0394ec",
+   "fa93c8169b65510a"
+  ],
+  "PrepareDrinkStation/1": [
+   "3ad11223ea1d02f3",
+   "e937d8c2c0c9e7cd"
+  ],
+  "PrepareDrinkStation/23": [
+   "658fdea392ad71b2",
+   "7c420af0765d48fb"
+  ],
+  "PrepareDrinkStation/7": [
+   "3e1eb28c4584cb7a",
+   "7c420af0765d48fb"
+  ],
+  "PrepareSandwichStation/0": [
+   "dc5a4ffb82d03ce1",
+   "14abb9ee8310d805"
+  ],
+  "PrepareSandwichStation/1": [
+   "e14c58c8d2d54714",
+   "701fd1e5657602a6"
+  ],
+  "PrepareSandwichStation/23": [
+   "442c8326663d751f",
+   "c2c826fac411d4e0"
+  ],
+  "PrepareSandwichStation/7": [
+   "1aadcb92a254998f",
+   "5b2c3657e06a06c9"
+  ],
+  "PrepareSausageCheese/0": [
+   "eb9bf449eb02d0bb",
+   "9465ee2214dab668"
+  ],
+  "PrepareSausageCheese/1": [
+   "d2f69630b77881e9",
+   "2aad2b17c6ca1630"
+  ],
+  "PrepareSausageCheese/23": [
+   "7bad5ad0429163b4",
+   "5ea783bd8f64dbc1"
+  ],
+  "PrepareSausageCheese/7": [
+   "8334f80f04466eed",
+   "f15df8899a10b3af"
+  ],
+  "PrepareSoupServing/0": [
+   "0888bacd63a766d0",
+   "b3b97466a0958b25"
+  ],
+  "PrepareSoupServing/1": [
+   "5b8ff7bb2c6c57f1",
+   "5be076e833431455"
+  ],
+  "PrepareSoupServing/23": [
+   "eb155d5aaf02f6f4",
+   "2a9a97ffe30e6576"
+  ],
+  "PrepareSoupServing/7": [
+   "6e49279d9aa61df8",
+   "22ba9c9c0109fd89"
+  ],
+  "SeasoningSteak/0": [
+   "c7e68e53faffdfae",
+   "591fb0f5f3b61991"
+  ],
+  "SeasoningSteak/1": [
+   "66452674d1c1dccd",
+   "0ae42616d11d098c"
+  ],
+  "SeasoningSteak/23": [
+   "3da70123086f2916",
+   "3868d4ba87d63e2b"
+  ],
+  "SeasoningSteak/7": [
+   "b5b3271d4b091329",
+   "3868d4ba87d63e2b"
+  ],
+  "ServeMealJuice/0": [
+   "e2dad6a379b3d9df",
+   "3b374429a4f2cc88"
+  ],
+  "ServeMealJuice/1": [
+   "e7d5d15e3a5070e7",
+   "6efd22793d03dd04"
+  ],
+  "ServeMealJuice/23": [
+   "979e46d2adc33cfa",
+   "540d213ecf823110"
+  ],
+  "ServeMealJuice/7": [
+   "e57e4552da3e7f8e",
+   "540d213ecf823110"
+  ],
+  "ServeSteak/0": [
+   "e5f3d7af021a56a3",
+   "e57eed64c5e398e1"
+  ],
+  "ServeSteak/1": [
+   "8dbcabb2ab4feb26",
+   "0bec1352702c1432"
+  ],
+  "ServeSteak/23": [
+   "33b81f276e2bae10",
+   "2538adafaff743b2"
+  ],
+  "ServeSteak/7": [
+   "24c0b1611e1f085d",
+   "0bec1352702c1432"
+  ],
+  "SetBowlsForSoup/0": [
+   "9c4393f0e851af2e",
+   "ec6a54853e251b96"
+  ],
+  "SetBowlsForSoup/1": [
+   "253d193399eeb32c",
+   "9680c1e3b6172dce"
+  ],
+  "SetBowlsForSoup/23": [
+   "dd1b36a34f8b1e6a",
+   "c5c750f5a4ea0ac6"
+  ],
+  "SetBowlsForSoup/7": [
+   "677eaa5a125e3625",
+   "c5c750f5a4ea0ac6"
+  ],
+  "SetUpSpiceStation/0": [
+   "18a7e1bbd532fca7",
+   "7cf6ca4cd2145584"
+  ],
+  "SetUpSpiceStation/1": [
+   "72c32d1e6d851e7d",
+   "e3b00b923eaa554a"
+  ],
+  "SetUpSpiceStation/23": [
+   "92e08d0e3b5f52a4",
+   "cedbd8117b7c5c76"
+  ],
+  "SetUpSpiceStation/7": [
+   "00cf2f19c4f51161",
+   "b880ad85532f9651"
+  ],
+  "SetupBowls/0": [
+   "aa0da980c2172cf1",
+   "f6c09bd341cbe63e"
+  ],
+  "SetupBowls/1": [
+   "43ca16db2ae3e679",
+   "03f2050ef299b0df"
+  ],
+  "SetupBowls/23": [
+   "9a941ad2ebab8d4e",
+   "fb89fc2d5d6542d9"
+  ],
+  "SetupBowls/7": [
+   "d5870fa2e88b5768",
+   "fb89fc2d5d6542d9"
+  ],
+  "SetupButterPlate/0": [
+   "b1eeaf1f1ce9b6a4",
+   "f35b783dfe452a2a"
+  ],
+  "SetupButterPlate/1": [
+   "a009a865815d4456",
+   "a6b4f2957723b863"
+  ],
+  "SetupButterPlate/23": [
+   "dde24e664b2cbb33",
+   "e7b5665d74be3bb2"
+  ],
+  "SetupButterPlate/7": [
+   "197aecde1342c35f",
+   "87f939db995abe3a"
+  ],
+  "SetupSodaBowl/0": [
+   "1791627c7beffad6",
+   "c7d494322811d6e5"
+  ],
+  "SetupSodaBowl/1": [
+   "016284f8e3dee230",
+   "f212a5bd181a83af"
+  ],
+  "SetupSodaBowl/23": [
+   "ef2e64dd5e3d1129",
+   "8b1db4d547243942"
+  ],
+  "SetupSodaBowl/7": [
+   "35716a4f1a012d88",
+   "55db9a6b9465e622"
+  ],
+  "SetupWineGlasses/0": [
+   "ffe0b00db306db99",
+   "550ca42b7b7fc888"
+  ],
+  "SetupWineGlasses/1": [
+   "6d19dddccb1ba4ce",
+   "51f31f6dfce577e4"
+  ],
+  "SetupWineGlasses/23": [
+   "ad988a6ce3f69b90",
+   "e95534adaa8c1048"
+  ],
+  "SetupWineGlasses/7": [
+   "930ef30c7236d442",
+   "e95534adaa8c1048"
+  ],
+  "SpicyMarinade/0": [
+   "eef33e6f6cd2d8ee",
+   "53bcab84860309b0"
+  ],
+  "SpicyMarinade/1": [
+   "c07608f564b6845d",
+   "cecfb11d71401f57"
+  ],
+  "SpicyMarinade/23": [
+   "8351f57759026230",
+   "24d3d9203e67e818"
+  ],
+  "SpicyMarinade/7": [
+   "b9a52e5933d41d09",
+   "24d3d9203e67e818"
+  ],
+  "SweetenCoffee/0": [
+   "15fd054c34c02fc5",
+   "42c7f548d6c47117"
+  ],
+  "SweetenCoffee/1": [
+   "e18d503755f4bf63",
+   "5119ff68e4fe9ec6"
+  ],
+  "SweetenCoffee/23": [
+   "fe24fa413bcd2709",
+   "55eeb0cd4b0cc32a"
+  ],
+  "SweetenCoffee/7": [
+   "e6d8f8bef0f17ff9",
+   "8f661ff90b518bfe"
+  ],
+  "TongBuffetSetup/0": [
+   "7a0413e363622a5a",
+   "0e93ab6b4866e0c3"
+  ],
+  "TongBuffetSetup/1": [
+   "09c25a5f7ec99cf4",
+   "db433205c4d498b5"
+  ],
+  "TongBuffetSetup/23": [
+   "bd44a6b3adf38d65",
+   "709fa043cf4b5688"
+  ],
+  "TongBuffetSetup/7": [
+   "f9d24783e6f6aacc",
+   "de9e14aa82315ee5"
+  ],
+  "VeggieDipPrep/0": [
+   "9fbe3e9bfcd8ed2b",
+   "a60287c581d2919c"
+  ],
+  "VeggieDipPrep/1": [
+   "7fe7017eca2d0bb4",
+   "7942c017e626b570"
+  ],
+  "VeggieDipPrep/23": [
+   "adc3e3036ed31931",
+   "7942c017e626b570"
+  ],
+  "VeggieDipPrep/7": [
+   "d579de92c49590d4",
+   "7942c017e626b570"
+  ]
+ }
+}

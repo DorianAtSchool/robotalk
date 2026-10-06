@@ -1,0 +1,487 @@
+{
+  "spec_version": 1,
+  "composite_task": "PrepareSandwichStation",
+  "source_python_module": "robocasa.environments.kitchen.composite.preparing_sandwiches.prepare_sandwich_station",
+  "agent_ids": [
+    "agent_0",
+    "agent_1"
+  ],
+  "max_reasoning_chars": 200,
+  "validator_checks": [
+    "initial_communication",
+    "allowed_tools",
+    "navigation_preconditions",
+    "manipulation_preconditions",
+    "effects",
+    "final_success"
+  ],
+  "preflight_token_estimate": {
+    "prompt_tokens": 3250,
+    "output_tokens": 3900,
+    "reasoning_tokens": 0
+  },
+  "initial_state": {
+    "agents": {
+      "agent_0": {
+        "location": "ingredient_source_fixture",
+        "held_object": null
+      },
+      "agent_1": {
+        "location": "ingredient_source_fixture",
+        "held_object": null
+      }
+    },
+    "objects": {
+      "ingredient_bowl": {
+        "object_type": "bowl",
+        "location": "ingredient_source_fixture"
+      },
+      "baguette": {
+        "object_type": "baguette",
+        "location": "ingredient_source_fixture"
+      },
+      "tomato_slice": {
+        "object_type": "tomato_slice",
+        "location": "ingredient_bowl"
+      },
+      "pickle_slice": {
+        "object_type": "pickle_slice",
+        "location": "ingredient_bowl"
+      },
+      "turkey_slice": {
+        "object_type": "turkey_slice",
+        "location": "ingredient_bowl"
+      }
+    },
+    "fixtures": {
+      "ingredient_source_fixture": {
+        "fixture_type": "fridge",
+        "parts": {
+          "door": {
+            "part_type": "hinged_part",
+            "state": "closed"
+          }
+        }
+      },
+      "staging_surface": {
+        "fixture_type": "counter"
+      },
+      "toaster_oven": {
+        "fixture_type": "toaster_oven"
+      }
+    },
+    "machine_state": {
+      "toaster_oven": {
+        "adjacent_location_id": "staging_surface"
+      },
+      "prepare_sandwich_station": {
+        "ingredient_bowl_staged": false,
+        "baguette_staged": false
+      }
+    }
+  },
+  "allowed_tool_specs": {
+    "communicate": {
+      "description": "Send a short coordination message to the other agent in the scene. args.to must be that agent's exact ID. Set args.releases to the exact symbolic id of a thing you have finished with and are handing over -- that, and only that, wakes a partner who is waiting on it. Omit args.releases from every other message. args.releases must be an object id or a fixture id that appears in initial_state, copied exactly. It names a THING, never an event or a status: 'coffee_machine' and 'mug' are ids; 'mug_placed', 'counter_free' and 'task_done' are not, and an id that does not exist releases nothing at all. coordination_phase is optional and must be omitted from ordinary messages. Use it only for the opening propose/await_plan/await_confirmation/confirm handshake or for portion_complete.",
+      "tool_args": [
+        "to",
+        "message"
+      ],
+      "optional_tool_args": [
+        "releases",
+        "coordination_phase"
+      ],
+      "tool_arg_types": {
+        "coordination_phase": "STRING"
+      },
+      "allowed_arg_values": {
+        "coordination_phase": [
+          "propose",
+          "await_plan",
+          "await_confirmation",
+          "confirm",
+          "portion_complete"
+        ]
+      }
+    },
+    "wait_for_signal": {
+      "description": "Pause until the other agent hands over what you are waiting for. args.about names that thing by its exact symbolic id -- an object id or a fixture id that appears in initial_state, copied exactly. It is a THING you are waiting FOR, never an event you are waiting ON: wait about='coffee_machine', never about='mug_placed' or 'your_turn'. An id that is not in initial_state can never be released, so the wait blocks forever and the whole plan is thrown away. You stay paused until args.from sends a communicate whose args.releases names the same id -- their other messages do not wake you, so you do not need to wait again after an unrelated one.",
+      "tool_args": [
+        "from",
+        "about"
+      ]
+    },
+    "navigate_to_fixture": {
+      "description": "Move the robot base to the working pose of a fixture.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "ingredient_source_fixture",
+        "staging_surface"
+      ]
+    },
+    "pick_up_object": {
+      "description": "Grasp and lift an object from a symbolic source region.",
+      "tool_args": [
+        "object_id",
+        "source_id"
+      ],
+      "optional_tool_args": [
+        "source_site_id"
+      ],
+      "allowed_object_ids": [
+        "ingredient_bowl",
+        "baguette"
+      ],
+      "allowed_source_ids": [
+        "ingredient_source_fixture",
+        "staging_surface"
+      ]
+    },
+    "place_next_to": {
+      "description": "Place an object adjacent to a reference object or nearby fixture on the same support surface. Use reference_object_id only for movable objects and reference_fixture_id only for fixtures.",
+      "tool_args": [
+        "object_id"
+      ],
+      "tool_arg_any_of": [
+        [
+          "reference_id",
+          "reference_object_id",
+          "reference_fixture_id"
+        ]
+      ],
+      "optional_tool_args": [
+        "reference_id",
+        "reference_object_id",
+        "reference_fixture_id",
+        "target_site_id",
+        "relative_position"
+      ],
+      "allowed_object_ids": [
+        "ingredient_bowl",
+        "baguette"
+      ],
+      "allowed_reference_fixture_ids": [
+        "toaster_oven"
+      ]
+    },
+    "give_space": {
+      "description": "Yield working room at a fixture so the other agent can complete an action there.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "ingredient_source_fixture",
+        "staging_surface"
+      ]
+    },
+    "open_hinged_part": {
+      "description": "Open a hinged door, lid, or articulated head on a fixture.",
+      "tool_args": [
+        "target_id",
+        "part_id"
+      ],
+      "allowed_target_ids": [
+        "ingredient_source_fixture"
+      ],
+      "allowed_part_ids": [
+        "door"
+      ]
+    }
+  },
+  "task_goal": "retrieve ingredient_bowl and baguette from ingredient_source_fixture, then place both next to toaster_oven on staging_surface to stage them near the toaster oven.",
+  "extra_execution_rules": [
+    "Pick up ingredient_bowl and baguette from ingredient_source_fixture before staging them on staging_surface.",
+    "Use place_next_to with reference_fixture_id toaster_oven so both items end up on staging_surface near the toaster oven.",
+    "Keep tomato_slice, pickle_slice, and turkey_slice inside ingredient_bowl throughout the trajectory."
+  ],
+  "initial_public_state": {
+    "ingredient_bowl_location": "ingredient_source_fixture",
+    "baguette_location": "ingredient_source_fixture",
+    "ingredient_bowl_staged": false,
+    "baguette_staged": false
+  },
+  "task_preconditions": [
+    {
+      "kind": "object_must_remain_at_location",
+      "object_id": "tomato_slice",
+      "location": "ingredient_bowl",
+      "message": "tomato_slice must remain in ingredient_bowl during PrepareSandwichStation."
+    },
+    {
+      "kind": "object_must_remain_at_location",
+      "object_id": "pickle_slice",
+      "location": "ingredient_bowl",
+      "message": "pickle_slice must remain in ingredient_bowl during PrepareSandwichStation."
+    },
+    {
+      "kind": "object_must_remain_at_location",
+      "object_id": "turkey_slice",
+      "location": "ingredient_bowl",
+      "message": "turkey_slice must remain in ingredient_bowl during PrepareSandwichStation."
+    },
+    {
+      "kind": "fixture_part_state_required_for_pickup",
+      "tool": "pick_up_object",
+      "source_id": "ingredient_source_fixture",
+      "fixture_id": "ingredient_source_fixture",
+      "part_id": "door",
+      "required_state": "open",
+      "message": "pick_up_object from ingredient_source_fixture requires the fridge door to be open."
+    }
+  ],
+  "goal_conditions": [
+    {
+      "kind": "object_at_location",
+      "object_id": "ingredient_bowl",
+      "location": "staging_surface"
+    },
+    {
+      "kind": "object_at_location",
+      "object_id": "baguette",
+      "location": "staging_surface"
+    },
+    {
+      "kind": "machine_flag_true",
+      "machine_path": [
+        "prepare_sandwich_station",
+        "ingredient_bowl_staged"
+      ]
+    },
+    {
+      "kind": "machine_flag_true",
+      "machine_path": [
+        "prepare_sandwich_station",
+        "baguette_staged"
+      ]
+    }
+  ],
+  "task_effects": [
+    {
+      "kind": "set_machine_flag_on_action",
+      "tool": "place_next_to",
+      "args": {
+        "object_id": "ingredient_bowl",
+        "reference_fixture_id": "toaster_oven"
+      },
+      "machine_path": [
+        "prepare_sandwich_station",
+        "ingredient_bowl_staged"
+      ],
+      "value": true
+    },
+    {
+      "kind": "set_machine_flag_on_action",
+      "tool": "place_next_to",
+      "args": {
+        "object_id": "baguette",
+        "reference_fixture_id": "toaster_oven"
+      },
+      "machine_path": [
+        "prepare_sandwich_station",
+        "baguette_staged"
+      ],
+      "value": true
+    }
+  ],
+  "grounding": {
+    "legacy_symbol_aliases": {
+      "ingredient_bowl_1": "ingredient_bowl",
+      "baguette_1": "baguette",
+      "tomato_slice_1": "tomato_slice",
+      "pickle_slice_1": "pickle_slice",
+      "turkey_slice_1": "turkey_slice",
+      "fridge_1": "ingredient_source_fixture",
+      "counter_1": "staging_surface",
+      "toaster_oven_1": "toaster_oven"
+    },
+    "symbols": {
+      "ingredient_bowl": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "role": "ingredient_bowl",
+        "preferred_fixture_types": [
+          "fridge",
+          "counter",
+          "counter_non_corner",
+          "counter_non_dining",
+          "dining_counter",
+          "island"
+        ]
+      },
+      "baguette": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "role": "baguette",
+        "preferred_fixture_types": [
+          "fridge",
+          "counter",
+          "counter_non_corner",
+          "counter_non_dining",
+          "dining_counter",
+          "island"
+        ]
+      },
+      "ingredient_source_fixture": {
+        "entity_type": "fixture",
+        "resolver": "source_fixture_for_object",
+        "role": "ingredient_source_fixture",
+        "object_symbol": "ingredient_bowl",
+        "preferred_fixture_types": [
+          "fridge"
+        ]
+      },
+      "toaster_oven": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "role": "toaster_oven",
+        "fixture_type": "toaster_oven"
+      },
+      "staging_surface": {
+        "entity_type": "fixture",
+        "resolver": "nearest_placeable_surface_to_fixture",
+        "role": "staging_surface",
+        "anchor_fixture_symbol": "toaster_oven",
+        "preferred_fixture_types": [
+          "counter",
+          "counter_non_corner",
+          "counter_non_dining",
+          "dining_counter",
+          "island"
+        ]
+      }
+    }
+  },
+  "example_trajectory": {
+    "agents": [
+      {
+        "agent": "agent_0"
+      },
+      {
+        "agent": "agent_1"
+      }
+    ],
+    "steps": [
+      {
+        "step": 0,
+        "agent": "agent_0",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_1",
+          "message": "I will navigate to ingredient_source_fixture to pick up the ingredient_bowl."
+        },
+        "reasoning": "I am initiating coordination with agent_1 to divide the task of retrieving items."
+      },
+      {
+        "step": 1,
+        "agent": "agent_1",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_0",
+          "message": "Understood, I will wait at staging_surface and then navigate to ingredient_source_fixture to pick up the baguette."
+        },
+        "reasoning": "I am confirming agent_0's plan and stating my intention to retrieve the remaining item."
+      },
+      {
+        "step": 2,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "ingredient_source_fixture"
+        },
+        "reasoning": "I am moving to the ingredient_source_fixture to reach the items."
+      },
+      {
+        "step": 3,
+        "agent": "agent_0",
+        "tool": "open_hinged_part",
+        "args": {
+          "target_id": "ingredient_source_fixture",
+          "part_id": "door"
+        },
+        "reasoning": "I need the fridge door open before I can take the ingredient_bowl."
+      },
+      {
+        "step": 4,
+        "agent": "agent_0",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "ingredient_bowl",
+          "source_id": "ingredient_source_fixture"
+        },
+        "reasoning": "I am picking up the ingredient_bowl from the fridge."
+      },
+      {
+        "step": 5,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "staging_surface"
+        },
+        "reasoning": "I am returning to the staging_surface to place the ingredient_bowl."
+      },
+      {
+        "step": 6,
+        "agent": "agent_0",
+        "tool": "place_next_to",
+        "args": {
+          "object_id": "ingredient_bowl",
+          "reference_fixture_id": "toaster_oven"
+        },
+        "reasoning": "I am placing the ingredient_bowl next to the toaster_oven as required."
+      },
+      {
+        "step": 7,
+        "agent": "agent_0",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_1",
+          "message": "I have placed the ingredient_bowl, you may now go to the ingredient_source_fixture."
+        },
+        "reasoning": "I am signaling to agent_1 that the workspace is clear and they can proceed."
+      },
+      {
+        "step": 8,
+        "agent": "agent_1",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "ingredient_source_fixture"
+        },
+        "reasoning": "I am now navigating to the ingredient_source_fixture to retrieve the baguette."
+      },
+      {
+        "step": 9,
+        "agent": "agent_1",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "baguette",
+          "source_id": "ingredient_source_fixture"
+        },
+        "reasoning": "I am picking up the baguette from the ingredient_source_fixture."
+      },
+      {
+        "step": 10,
+        "agent": "agent_1",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "staging_surface"
+        },
+        "reasoning": "I am bringing the baguette to the staging_surface."
+      },
+      {
+        "step": 11,
+        "agent": "agent_1",
+        "tool": "place_next_to",
+        "args": {
+          "object_id": "baguette",
+          "reference_fixture_id": "toaster_oven"
+        },
+        "reasoning": "I am placing the baguette next to the toaster_oven to complete the task."
+      }
+    ]
+  },
+  "notes": [
+    "This task is a good example of spec-driven invariant and derived-effect modeling."
+  ]
+}

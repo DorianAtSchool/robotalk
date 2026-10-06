@@ -1,0 +1,407 @@
+{
+  "spec_version": 1,
+  "composite_task": "SetupSodaBowl",
+  "source_python_module": "robocasa.environments.kitchen.composite.serving_beverages.setup_soda_bowl",
+  "agent_ids": [
+    "agent_0",
+    "agent_1"
+  ],
+  "max_reasoning_chars": 200,
+  "validator_checks": [
+    "initial_communication",
+    "allowed_tools",
+    "navigation_preconditions",
+    "manipulation_preconditions",
+    "effects",
+    "final_success"
+  ],
+  "preflight_token_estimate": {
+    "prompt_tokens": 3000,
+    "output_tokens": 3500,
+    "reasoning_tokens": 0
+  },
+  "initial_state": {
+    "agents": {
+      "agent_0": {
+        "location": "fridge",
+        "held_object": null
+      },
+      "agent_1": {
+        "location": "dining_counter",
+        "held_object": null
+      }
+    },
+    "objects": {
+      "ice_bowl": {
+        "object_type": "bowl",
+        "location": "dining_counter"
+      },
+      "ice1": {
+        "object_type": "ice_cube",
+        "location": "ice_bowl"
+      },
+      "ice2": {
+        "object_type": "ice_cube",
+        "location": "ice_bowl"
+      },
+      "ice3": {
+        "object_type": "ice_cube",
+        "location": "ice_bowl"
+      },
+      "soda1": {
+        "object_type": "bottled_drink",
+        "location": "fridge"
+      },
+      "soda2": {
+        "object_type": "bottled_drink",
+        "location": "fridge"
+      }
+    },
+    "fixtures": {
+      "fridge": {
+        "fixture_type": "fridge",
+        "parts": {
+          "hinged": {
+            "part_type": "hinged_part",
+            "state": "closed"
+          }
+        },
+        "controls": {}
+      },
+      "dining_counter": {
+        "fixture_type": "dining_counter",
+        "parts": {},
+        "controls": {}
+      },
+      "stool": {
+        "fixture_type": "stool",
+        "parts": {},
+        "controls": {}
+      }
+    },
+    "machine_state": {
+      "setup_soda_bowl": {}
+    }
+  },
+  "allowed_tool_specs": {
+    "communicate": {
+      "description": "Send a short coordination message to the other agent in the scene. args.to must be that agent's exact ID. Set args.releases to the exact symbolic id of a thing you have finished with and are handing over -- that, and only that, wakes a partner who is waiting on it. Omit args.releases from every other message. args.releases must be an object id or a fixture id that appears in initial_state, copied exactly. It names a THING, never an event or a status: 'coffee_machine' and 'mug' are ids; 'mug_placed', 'counter_free' and 'task_done' are not, and an id that does not exist releases nothing at all. coordination_phase is optional and must be omitted from ordinary messages. Use it only for the opening propose/await_plan/await_confirmation/confirm handshake or for portion_complete.",
+      "tool_args": [
+        "to",
+        "message"
+      ],
+      "optional_tool_args": [
+        "releases",
+        "coordination_phase"
+      ],
+      "tool_arg_types": {
+        "coordination_phase": "STRING"
+      },
+      "allowed_arg_values": {
+        "coordination_phase": [
+          "propose",
+          "await_plan",
+          "await_confirmation",
+          "confirm",
+          "portion_complete"
+        ]
+      }
+    },
+    "wait_for_signal": {
+      "description": "Pause until the other agent hands over what you are waiting for. args.about names that thing by its exact symbolic id -- an object id or a fixture id that appears in initial_state, copied exactly. It is a THING you are waiting FOR, never an event you are waiting ON: wait about='coffee_machine', never about='mug_placed' or 'your_turn'. An id that is not in initial_state can never be released, so the wait blocks forever and the whole plan is thrown away. You stay paused until args.from sends a communicate whose args.releases names the same id -- their other messages do not wake you, so you do not need to wait again after an unrelated one.",
+      "tool_args": [
+        "from",
+        "about"
+      ]
+    },
+    "navigate_to_fixture": {
+      "description": "Move the robot base to the working pose of a fixture.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "fridge",
+        "dining_counter"
+      ]
+    },
+    "open_hinged_part": {
+      "description": "Open a hinged door, lid, or articulated head on a fixture.",
+      "tool_args": [
+        "target_id",
+        "part_id"
+      ],
+      "allowed_target_ids": [
+        "fridge"
+      ],
+      "allowed_part_ids": [
+        "hinged"
+      ]
+    },
+    "pick_up_object": {
+      "description": "Grasp and lift an object from a symbolic source region.",
+      "tool_args": [
+        "object_id",
+        "source_id"
+      ],
+      "optional_tool_args": [
+        "source_site_id"
+      ],
+      "allowed_object_ids": [
+        "soda1",
+        "soda2"
+      ],
+      "allowed_source_ids": [
+        "fridge"
+      ]
+    },
+    "place_in_receptacle": {
+      "description": "Place an object into an interior or container-like receptacle. Use target_site_id separately when the exact basin, bowl, rack, shelf, slot, or tray matters.",
+      "tool_args": [
+        "object_id"
+      ],
+      "tool_arg_any_of": [
+        [
+          "target_id",
+          "receptacle_id"
+        ]
+      ],
+      "optional_tool_args": [
+        "target_id",
+        "receptacle_id",
+        "target_site_id",
+        "relative_position"
+      ],
+      "allowed_object_ids": [
+        "soda1",
+        "soda2"
+      ],
+      "allowed_receptacle_ids": [
+        "ice_bowl"
+      ]
+    },
+    "give_space": {
+      "description": "Yield working room at a fixture so the other agent can complete an action there.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "fridge",
+        "dining_counter"
+      ]
+    }
+  },
+  "task_goal": "Grab two sodas from the fridge and place both inside the bowl with ice on the dining counter; open the fridge first if it is closed.",
+  "extra_execution_rules": [
+    "The ice bowl must remain on the dining counter."
+  ],
+  "initial_public_state": {
+    "soda1_location": "fridge",
+    "soda2_location": "fridge",
+    "ice_bowl_location": "dining_counter"
+  },
+  "task_preconditions": [
+    {
+      "kind": "object_must_remain_at_location",
+      "object_id": "ice_bowl",
+      "location": "dining_counter",
+      "message": "The ice bowl must stay on the dining counter."
+    },
+    {
+      "kind": "fixture_part_state_required_for_pickup",
+      "tool": "pick_up_object",
+      "source_id": "fridge",
+      "fixture_id": "fridge",
+      "part_id": "hinged",
+      "required_state": "open",
+      "message": "The fridge must be open to retrieve sodas."
+    }
+  ],
+  "goal_conditions": [
+    {
+      "kind": "object_at_location",
+      "object_id": "soda1",
+      "location": "ice_bowl"
+    },
+    {
+      "kind": "object_at_location",
+      "object_id": "soda2",
+      "location": "ice_bowl"
+    },
+    {
+      "kind": "object_at_location",
+      "object_id": "ice_bowl",
+      "location": "dining_counter"
+    }
+  ],
+  "task_effects": [],
+  "grounding": {
+    "legacy_symbol_aliases": {},
+    "symbols": {
+      "ice_bowl": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "bowl"
+      },
+      "ice1": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "ice_cube"
+      },
+      "ice2": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "ice_cube"
+      },
+      "ice3": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "ice_cube"
+      },
+      "soda1": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "bottled_drink"
+      },
+      "soda2": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "bottled_drink"
+      },
+      "fridge": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "object_id": "soda1",
+        "fixture_type": "fridge"
+      },
+      "dining_counter": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "fixture_type": "dining_counter"
+      },
+      "stool": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "fixture_type": "stool"
+      }
+    }
+  },
+  "example_trajectory": {
+    "agents": [
+      {
+        "agent": "agent_0"
+      },
+      {
+        "agent": "agent_1"
+      }
+    ],
+    "steps": [
+      {
+        "step": 0,
+        "agent": "agent_0",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_1",
+          "message": "I will get the sodas from the fridge."
+        },
+        "reasoning": "Coordinating the task."
+      },
+      {
+        "step": 1,
+        "agent": "agent_1",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_0",
+          "message": "I will wait at the dining counter."
+        },
+        "reasoning": "Acknowledging the plan."
+      },
+      {
+        "step": 2,
+        "agent": "agent_0",
+        "tool": "open_hinged_part",
+        "args": {
+          "target_id": "fridge",
+          "part_id": "hinged"
+        },
+        "reasoning": "Opening the fridge to access sodas."
+      },
+      {
+        "step": 3,
+        "agent": "agent_0",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "soda1",
+          "source_id": "fridge"
+        },
+        "reasoning": "Picking up the first soda."
+      },
+      {
+        "step": 4,
+        "agent": "agent_1",
+        "tool": "give_space",
+        "args": {
+          "fixture_id": "dining_counter"
+        },
+        "reasoning": "Clearing a shared fixture already occupied by this agent before the other agent uses it."
+      },
+      {
+        "step": 5,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "dining_counter"
+        },
+        "reasoning": "Moving to the dining counter to place the soda."
+      },
+      {
+        "step": 6,
+        "agent": "agent_0",
+        "tool": "place_in_receptacle",
+        "args": {
+          "object_id": "soda1",
+          "receptacle_id": "ice_bowl"
+        },
+        "reasoning": "Placing the first soda in the bowl."
+      },
+      {
+        "step": 7,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "fridge"
+        },
+        "reasoning": "Returning to the fridge for the second soda."
+      },
+      {
+        "step": 8,
+        "agent": "agent_0",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "soda2",
+          "source_id": "fridge"
+        },
+        "reasoning": "Picking up the second soda."
+      },
+      {
+        "step": 9,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "dining_counter"
+        },
+        "reasoning": "Moving back to the dining counter."
+      },
+      {
+        "step": 10,
+        "agent": "agent_0",
+        "tool": "place_in_receptacle",
+        "args": {
+          "object_id": "soda2",
+          "receptacle_id": "ice_bowl"
+        },
+        "reasoning": "Placing the second soda in the bowl."
+      }
+    ]
+  },
+  "notes": []
+}

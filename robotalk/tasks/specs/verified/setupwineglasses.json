@@ -1,0 +1,430 @@
+{
+  "spec_version": 1,
+  "composite_task": "SetupWineGlasses",
+  "source_python_module": "robocasa.environments.kitchen.composite.setting_the_table.setup_wine_glasses",
+  "agent_ids": [
+    "agent_0",
+    "agent_1"
+  ],
+  "max_reasoning_chars": 200,
+  "validator_checks": [
+    "initial_communication",
+    "allowed_tools",
+    "navigation_preconditions",
+    "manipulation_preconditions",
+    "effects",
+    "final_success"
+  ],
+  "preflight_token_estimate": {
+    "prompt_tokens": 3000,
+    "output_tokens": 3500,
+    "reasoning_tokens": 0
+  },
+  "initial_state": {
+    "agents": {
+      "agent_0": {
+        "location": "counter",
+        "held_object": null
+      },
+      "agent_1": {
+        "location": "dining_counter",
+        "held_object": null
+      }
+    },
+    "objects": {
+      "plate1": {
+        "object_type": "plate",
+        "location": "dining_counter"
+      },
+      "plate2": {
+        "object_type": "plate",
+        "location": "dining_counter"
+      },
+      "wine_glass1": {
+        "object_type": "wine_glass",
+        "location": "counter"
+      },
+      "wine_glass2": {
+        "object_type": "wine_glass",
+        "location": "counter"
+      }
+    },
+    "fixtures": {
+      "cabinet": {
+        "fixture_type": "cabinet",
+        "parts": {},
+        "controls": {},
+        "parent_fixture": "counter"
+      },
+      "counter": {
+        "fixture_type": "counter",
+        "parts": {},
+        "controls": {}
+      },
+      "dining_counter": {
+        "fixture_type": "dining_counter",
+        "parts": {},
+        "controls": {}
+      }
+    },
+    "machine_state": {
+      "wine_glass1_assigned": false,
+      "wine_glass2_assigned": false
+    }
+  },
+  "allowed_tool_specs": {
+    "communicate": {
+      "description": "Send a short coordination message to the other agent in the scene. args.to must be that agent's exact ID. Set args.releases to the exact symbolic id of a thing you have finished with and are handing over -- that, and only that, wakes a partner who is waiting on it. Omit args.releases from every other message. args.releases must be an object id or a fixture id that appears in initial_state, copied exactly. It names a THING, never an event or a status: 'coffee_machine' and 'mug' are ids; 'mug_placed', 'counter_free' and 'task_done' are not, and an id that does not exist releases nothing at all. coordination_phase is optional and must be omitted from ordinary messages. Use it only for the opening propose/await_plan/await_confirmation/confirm handshake or for portion_complete.",
+      "tool_args": [
+        "to",
+        "message"
+      ],
+      "optional_tool_args": [
+        "releases",
+        "coordination_phase"
+      ],
+      "tool_arg_types": {
+        "coordination_phase": "STRING"
+      },
+      "allowed_arg_values": {
+        "coordination_phase": [
+          "propose",
+          "await_plan",
+          "await_confirmation",
+          "confirm",
+          "portion_complete"
+        ]
+      }
+    },
+    "wait_for_signal": {
+      "description": "Pause until the other agent hands over what you are waiting for. args.about names that thing by its exact symbolic id -- an object id or a fixture id that appears in initial_state, copied exactly. It is a THING you are waiting FOR, never an event you are waiting ON: wait about='coffee_machine', never about='mug_placed' or 'your_turn'. An id that is not in initial_state can never be released, so the wait blocks forever and the whole plan is thrown away. You stay paused until args.from sends a communicate whose args.releases names the same id -- their other messages do not wake you, so you do not need to wait again after an unrelated one.",
+      "tool_args": [
+        "from",
+        "about"
+      ]
+    },
+    "navigate_to_fixture": {
+      "description": "Move the robot base to the working pose of a fixture.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "counter",
+        "dining_counter"
+      ]
+    },
+    "pick_up_object": {
+      "description": "Grasp and lift an object from a symbolic source region.",
+      "tool_args": [
+        "object_id",
+        "source_id"
+      ],
+      "optional_tool_args": [
+        "source_site_id"
+      ],
+      "allowed_object_ids": [
+        "wine_glass1",
+        "wine_glass2"
+      ],
+      "allowed_source_ids": [
+        "counter"
+      ]
+    },
+    "place_next_to": {
+      "description": "Place an object adjacent to a reference object or nearby fixture on the same support surface. Use reference_object_id only for movable objects and reference_fixture_id only for fixtures.",
+      "tool_args": [
+        "object_id"
+      ],
+      "tool_arg_any_of": [
+        [
+          "reference_id",
+          "reference_object_id",
+          "reference_fixture_id"
+        ]
+      ],
+      "optional_tool_args": [
+        "reference_id",
+        "reference_object_id",
+        "reference_fixture_id",
+        "relative_position"
+      ],
+      "allowed_object_ids": [
+        "wine_glass1",
+        "wine_glass2"
+      ],
+      "allowed_reference_object_ids": [
+        "plate1",
+        "plate2"
+      ],
+      "allowed_target_site_ids": []
+    },
+    "give_space": {
+      "description": "Yield working room at a fixture so the other agent can complete an action there.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "counter",
+        "dining_counter"
+      ]
+    }
+  },
+  "task_goal": "Retrieve the wine glasses from the counter and place one next to each plate on the dining counter.",
+  "extra_execution_rules": [
+    "Each wine glass must be placed next to a different plate.",
+    "The wine glasses must be in contact with the dining counter."
+  ],
+  "initial_public_state": {
+    "wine_glass1_location": "counter",
+    "wine_glass2_location": "counter",
+    "plate1_location": "dining_counter",
+    "plate2_location": "dining_counter"
+  },
+  "task_preconditions": [
+    {
+      "kind": "object_must_remain_at_location",
+      "object_id": "plate1",
+      "location": "dining_counter",
+      "message": "The plates must stay on the dining counter."
+    },
+    {
+      "kind": "object_must_remain_at_location",
+      "object_id": "plate2",
+      "location": "dining_counter",
+      "message": "The plates must stay on the dining counter."
+    }
+  ],
+  "goal_conditions": [
+    {
+      "kind": "machine_flag_true",
+      "machine_path": [
+        "wine_glass1_assigned"
+      ]
+    },
+    {
+      "kind": "machine_flag_true",
+      "machine_path": [
+        "wine_glass2_assigned"
+      ]
+    },
+    {
+      "kind": "object_at_location",
+      "object_id": "wine_glass1",
+      "location": "dining_counter"
+    },
+    {
+      "kind": "object_at_location",
+      "object_id": "wine_glass2",
+      "location": "dining_counter"
+    }
+  ],
+  "task_effects": [
+    {
+      "kind": "set_machine_flag_on_action",
+      "tool": "place_next_to",
+      "args": {
+        "object_id": "wine_glass1",
+        "reference_object_id": "plate1"
+      },
+      "machine_path": [
+        "wine_glass1_assigned"
+      ],
+      "value": true
+    },
+    {
+      "kind": "set_machine_flag_on_action",
+      "tool": "place_next_to",
+      "args": {
+        "object_id": "wine_glass1",
+        "reference_object_id": "plate2"
+      },
+      "machine_path": [
+        "wine_glass1_assigned"
+      ],
+      "value": true
+    },
+    {
+      "kind": "set_machine_flag_on_action",
+      "tool": "place_next_to",
+      "args": {
+        "object_id": "wine_glass2",
+        "reference_object_id": "plate1"
+      },
+      "machine_path": [
+        "wine_glass2_assigned"
+      ],
+      "value": true
+    },
+    {
+      "kind": "set_machine_flag_on_action",
+      "tool": "place_next_to",
+      "args": {
+        "object_id": "wine_glass2",
+        "reference_object_id": "plate2"
+      },
+      "machine_path": [
+        "wine_glass2_assigned"
+      ],
+      "value": true
+    }
+  ],
+  "grounding": {
+    "legacy_symbol_aliases": {},
+    "symbols": {
+      "plate1": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "plate"
+      },
+      "plate2": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "plate"
+      },
+      "wine_glass1": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "wine_glass"
+      },
+      "wine_glass2": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "wine_glass"
+      },
+      "cabinet": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "fixture_type": "cabinet"
+      },
+      "counter": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "object_id": "wine_glass1",
+        "fixture_type": "counter"
+      },
+      "dining_counter": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "fixture_type": "dining_counter"
+      }
+    }
+  },
+  "example_trajectory": {
+    "agents": [
+      {
+        "agent": "agent_0"
+      },
+      {
+        "agent": "agent_1"
+      }
+    ],
+    "steps": [
+      {
+        "step": 0,
+        "agent": "agent_0",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_1",
+          "message": "I will take the first wine glass to the dining counter."
+        },
+        "reasoning": "Coordinating task division."
+      },
+      {
+        "step": 1,
+        "agent": "agent_1",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_0",
+          "message": "I will take the second wine glass."
+        },
+        "reasoning": "Acknowledging the plan."
+      },
+      {
+        "step": 2,
+        "agent": "agent_1",
+        "tool": "give_space",
+        "args": {
+          "fixture_id": "counter"
+        },
+        "reasoning": "Clearing a shared fixture already occupied by this agent before the other agent uses it."
+      },
+      {
+        "step": 3,
+        "agent": "agent_0",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "wine_glass1",
+          "source_id": "counter"
+        },
+        "reasoning": "Picking up the first glass."
+      },
+      {
+        "step": 4,
+        "agent": "agent_0",
+        "tool": "give_space",
+        "args": {
+          "fixture_id": "counter"
+        },
+        "reasoning": "Clearing a shared fixture already occupied by this agent before the other agent uses it."
+      },
+      {
+        "step": 5,
+        "agent": "agent_1",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "wine_glass2",
+          "source_id": "counter"
+        },
+        "reasoning": "Picking up the second glass."
+      },
+      {
+        "step": 6,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "dining_counter"
+        },
+        "reasoning": "Moving to the dining area."
+      },
+      {
+        "step": 7,
+        "agent": "agent_0",
+        "tool": "place_next_to",
+        "args": {
+          "object_id": "wine_glass1",
+          "reference_object_id": "plate1"
+        },
+        "reasoning": "Placing the first glass next to plate 1."
+      },
+      {
+        "step": 8,
+        "agent": "agent_0",
+        "tool": "give_space",
+        "args": {
+          "fixture_id": "dining_counter"
+        },
+        "reasoning": "Clearing space for agent_1."
+      },
+      {
+        "step": 9,
+        "agent": "agent_1",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "dining_counter"
+        },
+        "reasoning": "Moving to the dining area."
+      },
+      {
+        "step": 10,
+        "agent": "agent_1",
+        "tool": "place_next_to",
+        "args": {
+          "object_id": "wine_glass2",
+          "reference_object_id": "plate2"
+        },
+        "reasoning": "Placing the second glass next to plate 2."
+      }
+    ]
+  },
+  "notes": []
+}

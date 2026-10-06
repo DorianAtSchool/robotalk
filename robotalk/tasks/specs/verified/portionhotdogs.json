@@ -1,0 +1,426 @@
+{
+  "spec_version": 1,
+  "composite_task": "PortionHotDogs",
+  "source_python_module": "robocasa.environments.kitchen.composite.portioning_meals.portion_hot_dogs",
+  "agent_ids": [
+    "agent_0",
+    "agent_1"
+  ],
+  "max_reasoning_chars": 200,
+  "validator_checks": [
+    "initial_communication",
+    "allowed_tools",
+    "navigation_preconditions",
+    "manipulation_preconditions",
+    "effects",
+    "final_success"
+  ],
+  "preflight_token_estimate": {
+    "prompt_tokens": 3500,
+    "output_tokens": 4200,
+    "reasoning_tokens": 0
+  },
+  "initial_state": {
+    "agents": {
+      "agent_0": {
+        "location": "dining_counter",
+        "held_object": null
+      },
+      "agent_1": {
+        "location": "dining_counter",
+        "held_object": null
+      }
+    },
+    "objects": {
+      "plate1": {
+        "object_type": "plate",
+        "location": "dining_counter"
+      },
+      "plate2": {
+        "object_type": "plate",
+        "location": "dining_counter"
+      },
+      "bowl": {
+        "object_type": "bowl",
+        "location": "dining_counter"
+      },
+      "hotdog_bun1": {
+        "object_type": "hotdog_bun",
+        "location": "bowl"
+      },
+      "hotdog_bun2": {
+        "object_type": "hotdog_bun",
+        "location": "bowl"
+      },
+      "sausage1": {
+        "object_type": "sausage",
+        "location": "bowl"
+      },
+      "sausage2": {
+        "object_type": "sausage",
+        "location": "bowl"
+      }
+    },
+    "fixtures": {
+      "dining_counter": {
+        "fixture_type": "dining_counter"
+      }
+    },
+    "machine_state": {
+      "portion_hot_dogs": {}
+    }
+  },
+  "allowed_tool_specs": {
+    "communicate": {
+      "description": "Send a short coordination message to the other agent in the scene. args.to must be that agent's exact ID. Set args.releases to the exact symbolic id of a thing you have finished with and are handing over -- that, and only that, wakes a partner who is waiting on it. Omit args.releases from every other message. args.releases must be an object id or a fixture id that appears in initial_state, copied exactly. It names a THING, never an event or a status: 'coffee_machine' and 'mug' are ids; 'mug_placed', 'counter_free' and 'task_done' are not, and an id that does not exist releases nothing at all. coordination_phase is optional and must be omitted from ordinary messages. Use it only for the opening propose/await_plan/await_confirmation/confirm handshake or for portion_complete.",
+      "tool_args": [
+        "to",
+        "message"
+      ],
+      "optional_tool_args": [
+        "releases",
+        "coordination_phase"
+      ],
+      "tool_arg_types": {
+        "coordination_phase": "STRING"
+      },
+      "allowed_arg_values": {
+        "coordination_phase": [
+          "propose",
+          "await_plan",
+          "await_confirmation",
+          "confirm",
+          "portion_complete"
+        ]
+      }
+    },
+    "wait_for_signal": {
+      "description": "Pause until the other agent hands over what you are waiting for. args.about names that thing by its exact symbolic id -- an object id or a fixture id that appears in initial_state, copied exactly. It is a THING you are waiting FOR, never an event you are waiting ON: wait about='coffee_machine', never about='mug_placed' or 'your_turn'. An id that is not in initial_state can never be released, so the wait blocks forever and the whole plan is thrown away. You stay paused until args.from sends a communicate whose args.releases names the same id -- their other messages do not wake you, so you do not need to wait again after an unrelated one.",
+      "tool_args": [
+        "from",
+        "about"
+      ]
+    },
+    "navigate_to_fixture": {
+      "description": "Move the robot base to the working pose of a fixture.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "dining_counter"
+      ]
+    },
+    "pick_up_object": {
+      "description": "Grasp and lift an object from a symbolic source region.",
+      "tool_args": [
+        "object_id",
+        "source_id"
+      ],
+      "optional_tool_args": [
+        "source_site_id"
+      ],
+      "allowed_object_ids": [
+        "hotdog_bun1",
+        "hotdog_bun2",
+        "sausage1",
+        "sausage2"
+      ],
+      "allowed_source_ids": [
+        "bowl"
+      ]
+    },
+    "place_on_object": {
+      "description": "Place an object on top of another movable support object such as a plate or cutting_board.",
+      "tool_args": [
+        "object_id"
+      ],
+      "tool_arg_any_of": [
+        [
+          "target_id",
+          "support_object_id"
+        ]
+      ],
+      "optional_tool_args": [
+        "target_id",
+        "relative_position"
+      ],
+      "allowed_object_ids": [
+        "hotdog_bun1",
+        "hotdog_bun2",
+        "sausage1",
+        "sausage2"
+      ],
+      "allowed_support_object_ids": [
+        "plate1",
+        "plate2"
+      ]
+    },
+    "give_space": {
+      "description": "Yield working room at a fixture so the other agent can complete an action there.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "dining_counter"
+      ]
+    }
+  },
+  "task_goal": "place exactly one hotdog_bun and one sausage on plate1, and exactly one hotdog_bun and one sausage on plate2, all retrieved from the bowl on the dining_counter.",
+  "extra_execution_rules": [
+    "Each plate must receive exactly one bun and one sausage.",
+    "Do not move the plates or the bowl from the dining_counter.",
+    "The dining_counter is roomy, so both agents may work there simultaneously when they use different objects; do not call give_space merely because both are at the counter.",
+    "Never have both agents pick from the shared bowl on the same tick. Stagger bowl pickups while giving both unblocked agents a real tool call on every tick. Use wait_for_signal only if one agent truly must block for the bowl; otherwise pair each bowl pickup with useful non-conflicting work by the other agent."
+  ],
+  "initial_public_state": {
+    "plate1_location": "dining_counter",
+    "plate2_location": "dining_counter",
+    "bowl_location": "dining_counter",
+    "hotdog_bun1_location": "bowl",
+    "hotdog_bun2_location": "bowl",
+    "sausage1_location": "bowl",
+    "sausage2_location": "bowl"
+  },
+  "task_preconditions": [
+    {
+      "kind": "object_must_remain_at_location",
+      "object_id": "plate1",
+      "location": "dining_counter",
+      "message": "plate1 must remain on the dining_counter."
+    },
+    {
+      "kind": "object_must_remain_at_location",
+      "object_id": "plate2",
+      "location": "dining_counter",
+      "message": "plate2 must remain on the dining_counter."
+    },
+    {
+      "kind": "object_must_remain_at_location",
+      "object_id": "bowl",
+      "location": "dining_counter",
+      "message": "bowl must remain on the dining_counter."
+    }
+  ],
+  "goal_conditions": [
+    {
+      "kind": "object_count_at_location",
+      "object_ids": [
+        "hotdog_bun1",
+        "hotdog_bun2"
+      ],
+      "location": "plate1",
+      "count": 1
+    },
+    {
+      "kind": "object_count_at_location",
+      "object_ids": [
+        "sausage1",
+        "sausage2"
+      ],
+      "location": "plate1",
+      "count": 1
+    },
+    {
+      "kind": "object_count_at_location",
+      "object_ids": [
+        "hotdog_bun1",
+        "hotdog_bun2"
+      ],
+      "location": "plate2",
+      "count": 1
+    },
+    {
+      "kind": "object_count_at_location",
+      "object_ids": [
+        "sausage1",
+        "sausage2"
+      ],
+      "location": "plate2",
+      "count": 1
+    }
+  ],
+  "task_effects": [],
+  "grounding": {
+    "legacy_symbol_aliases": {
+      "plate1_1": "plate1",
+      "plate2_1": "plate2",
+      "bowl_1": "bowl",
+      "hotdog_bun1_1": "hotdog_bun1",
+      "hotdog_bun2_1": "hotdog_bun2",
+      "sausage1_1": "sausage1",
+      "sausage2_1": "sausage2",
+      "dining_counter_1": "dining_counter"
+    },
+    "symbols": {
+      "plate1": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "role": "plate1",
+        "preferred_fixture_types": [
+          "dining_counter"
+        ],
+        "object_type": "plate"
+      },
+      "plate2": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "role": "plate2",
+        "preferred_fixture_types": [
+          "dining_counter"
+        ],
+        "object_type": "plate"
+      },
+      "bowl": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "role": "bowl",
+        "preferred_fixture_types": [
+          "dining_counter"
+        ],
+        "object_type": "bowl"
+      },
+      "hotdog_bun1": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "role": "hotdog_bun1",
+        "object_type": "hotdog_bun"
+      },
+      "hotdog_bun2": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "role": "hotdog_bun2",
+        "object_type": "hotdog_bun"
+      },
+      "sausage1": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "role": "sausage1",
+        "object_type": "sausage"
+      },
+      "sausage2": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "role": "sausage2",
+        "object_type": "sausage"
+      },
+      "dining_counter": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "fixture_type": "dining_counter",
+        "role": "dining_counter"
+      }
+    }
+  },
+  "example_trajectory": {
+    "agents": [
+      {
+        "agent": "agent_0"
+      },
+      {
+        "agent": "agent_1"
+      }
+    ],
+    "steps": [
+      {
+        "step": 0,
+        "agent": "agent_0",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_1",
+          "message": "I will portion the items for plate1."
+        },
+        "reasoning": "We should divide the work by target plate."
+      },
+      {
+        "step": 1,
+        "agent": "agent_1",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_0",
+          "message": "I will portion the items for plate2."
+        },
+        "reasoning": "I am confirming my role for the second plate."
+      },
+      {
+        "step": 2,
+        "agent": "agent_0",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "hotdog_bun1",
+          "source_id": "bowl"
+        },
+        "reasoning": "I am picking up the first bun for plate1."
+      },
+      {
+        "step": 3,
+        "agent": "agent_1",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "hotdog_bun2",
+          "source_id": "bowl"
+        },
+        "reasoning": "I am picking up the second bun for plate2."
+      },
+      {
+        "step": 4,
+        "agent": "agent_0",
+        "tool": "place_on_object",
+        "args": {
+          "object_id": "hotdog_bun1",
+          "support_object_id": "plate1"
+        },
+        "reasoning": "Placing the bun on plate1."
+      },
+      {
+        "step": 5,
+        "agent": "agent_1",
+        "tool": "place_on_object",
+        "args": {
+          "object_id": "hotdog_bun2",
+          "support_object_id": "plate2"
+        },
+        "reasoning": "Placing the bun on plate2."
+      },
+      {
+        "step": 6,
+        "agent": "agent_0",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "sausage1",
+          "source_id": "bowl"
+        },
+        "reasoning": "I am picking up the first sausage for plate1."
+      },
+      {
+        "step": 7,
+        "agent": "agent_1",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "sausage2",
+          "source_id": "bowl"
+        },
+        "reasoning": "I am picking up the second sausage for plate2."
+      },
+      {
+        "step": 8,
+        "agent": "agent_0",
+        "tool": "place_on_object",
+        "args": {
+          "object_id": "sausage1",
+          "support_object_id": "plate1"
+        },
+        "reasoning": "Completing plate1 with a sausage."
+      },
+      {
+        "step": 9,
+        "agent": "agent_1",
+        "tool": "place_on_object",
+        "args": {
+          "object_id": "sausage2",
+          "support_object_id": "plate2"
+        },
+        "reasoning": "Completing plate2 with a sausage."
+      }
+    ]
+  }
+}

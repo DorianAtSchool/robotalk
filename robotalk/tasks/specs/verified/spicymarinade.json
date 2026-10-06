@@ -1,0 +1,469 @@
+{
+  "spec_version": 1,
+  "composite_task": "SpicyMarinade",
+  "source_python_module": "robocasa.environments.kitchen.composite.mixing_and_blending.spicy_marinade",
+  "agent_ids": [
+    "agent_0",
+    "agent_1"
+  ],
+  "max_reasoning_chars": 200,
+  "validator_checks": [
+    "initial_communication",
+    "allowed_tools",
+    "navigation_preconditions",
+    "manipulation_preconditions",
+    "effects",
+    "final_success"
+  ],
+  "preflight_token_estimate": {
+    "prompt_tokens": 3000,
+    "output_tokens": 3500,
+    "reasoning_tokens": 0
+  },
+  "initial_state": {
+    "agents": {
+      "agent_0": {
+        "location": "cabinet",
+        "held_object": null
+      },
+      "agent_1": {
+        "location": "counter",
+        "held_object": null
+      }
+    },
+    "objects": {
+      "receptacle": {
+        "object_type": "cutting_board",
+        "location": "counter"
+      },
+      "bowl": {
+        "object_type": "bowl",
+        "location": "cabinet"
+      },
+      "condiment": {
+        "object_type": "condiment",
+        "location": "cabinet"
+      },
+      "lime": {
+        "object_type": "lime",
+        "location": "counter"
+      },
+      "garlic": {
+        "object_type": "garlic",
+        "location": "counter"
+      }
+    },
+    "fixtures": {
+      "cabinet": {
+        "fixture_type": "cabinet_double_door",
+        "parts": {
+          "hinged": {
+            "part_type": "hinged_part",
+            "state": "closed"
+          }
+        },
+        "controls": {},
+        "parent_fixture": "counter"
+      },
+      "counter": {
+        "fixture_type": "counter",
+        "parts": {},
+        "controls": {}
+      }
+    },
+    "machine_state": {
+      "spicy_marinade": {}
+    }
+  },
+  "allowed_tool_specs": {
+    "communicate": {
+      "description": "Send a short coordination message to the other agent in the scene. args.to must be that agent's exact ID. Set args.releases to the exact symbolic id of a thing you have finished with and are handing over -- that, and only that, wakes a partner who is waiting on it. Omit args.releases from every other message. args.releases must be an object id or a fixture id that appears in initial_state, copied exactly. It names a THING, never an event or a status: 'coffee_machine' and 'mug' are ids; 'mug_placed', 'counter_free' and 'task_done' are not, and an id that does not exist releases nothing at all. coordination_phase is optional and must be omitted from ordinary messages. Use it only for the opening propose/await_plan/await_confirmation/confirm handshake or for portion_complete.",
+      "tool_args": [
+        "to",
+        "message"
+      ],
+      "optional_tool_args": [
+        "releases",
+        "coordination_phase"
+      ],
+      "tool_arg_types": {
+        "coordination_phase": "STRING"
+      },
+      "allowed_arg_values": {
+        "coordination_phase": [
+          "propose",
+          "await_plan",
+          "await_confirmation",
+          "confirm",
+          "portion_complete"
+        ]
+      }
+    },
+    "wait_for_signal": {
+      "description": "Pause until the other agent hands over what you are waiting for. args.about names that thing by its exact symbolic id -- an object id or a fixture id that appears in initial_state, copied exactly. It is a THING you are waiting FOR, never an event you are waiting ON: wait about='coffee_machine', never about='mug_placed' or 'your_turn'. An id that is not in initial_state can never be released, so the wait blocks forever and the whole plan is thrown away. You stay paused until args.from sends a communicate whose args.releases names the same id -- their other messages do not wake you, so you do not need to wait again after an unrelated one.",
+      "tool_args": [
+        "from",
+        "about"
+      ]
+    },
+    "navigate_to_fixture": {
+      "description": "Move the robot base to the working pose of a fixture.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "cabinet",
+        "counter"
+      ]
+    },
+    "open_hinged_part": {
+      "description": "Open a hinged door, lid, or articulated head on a fixture.",
+      "tool_args": [
+        "target_id",
+        "part_id"
+      ],
+      "allowed_target_ids": [
+        "cabinet"
+      ],
+      "allowed_part_ids": [
+        "hinged"
+      ]
+    },
+    "pick_up_object": {
+      "description": "Grasp and lift an object from a symbolic source region.",
+      "tool_args": [
+        "object_id",
+        "source_id"
+      ],
+      "optional_tool_args": [
+        "source_site_id"
+      ],
+      "allowed_object_ids": [
+        "bowl",
+        "condiment",
+        "lime",
+        "garlic"
+      ],
+      "allowed_source_ids": [
+        "cabinet",
+        "counter"
+      ]
+    },
+    "place_on_surface": {
+      "description": "Place an object onto an exposed support surface or attachment seat. Keep the fixture id in support_id or target_id and put the exact burner, rack, or other sub-location in target_site_id.",
+      "tool_args": [
+        "object_id"
+      ],
+      "tool_arg_any_of": [
+        [
+          "target_id",
+          "support_id"
+        ]
+      ],
+      "optional_tool_args": [
+        "target_id",
+        "support_id",
+        "target_site_id",
+        "relative_position"
+      ],
+      "allowed_object_ids": [
+        "bowl",
+        "condiment"
+      ],
+      "allowed_target_ids": [
+        "counter"
+      ]
+    },
+    "place_on_object": {
+      "description": "Place an object on top of another movable support object such as a plate or cutting_board.",
+      "tool_args": [
+        "object_id"
+      ],
+      "tool_arg_any_of": [
+        [
+          "target_id",
+          "support_object_id"
+        ]
+      ],
+      "optional_tool_args": [
+        "target_id",
+        "relative_position"
+      ],
+      "allowed_object_ids": [
+        "lime",
+        "garlic"
+      ],
+      "support_object_id": [
+        "receptacle"
+      ]
+    },
+    "give_space": {
+      "description": "Yield working room at a fixture so the other agent can complete an action there.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "cabinet",
+        "counter"
+      ]
+    }
+  },
+  "task_goal": "Place the bowl and condiment from the cabinet on the counter, opening the cabinet first if it is closed. Then place the lime and garlic on the cutting board.",
+  "extra_execution_rules": [
+    "The cabinet must be open before picking up the bowl or condiment."
+  ],
+  "initial_public_state": {
+    "bowl_location": "cabinet",
+    "condiment_location": "cabinet",
+    "lime_location": "counter",
+    "garlic_location": "counter",
+    "receptacle_location": "counter"
+  },
+  "task_preconditions": [
+    {
+      "kind": "fixture_part_state_required_for_pickup",
+      "tool": "pick_up_object",
+      "source_id": "cabinet",
+      "fixture_id": "cabinet",
+      "part_id": "hinged",
+      "required_state": "open",
+      "message": "Open the cabinet before picking up items inside."
+    }
+  ],
+  "goal_conditions": [
+    {
+      "kind": "object_at_location",
+      "object_id": "bowl",
+      "location": "counter",
+      "machine_path": null
+    },
+    {
+      "kind": "object_at_location",
+      "object_id": "condiment",
+      "location": "counter",
+      "machine_path": null
+    },
+    {
+      "kind": "object_at_location",
+      "object_id": "lime",
+      "location": "receptacle",
+      "machine_path": null
+    },
+    {
+      "kind": "object_at_location",
+      "object_id": "garlic",
+      "location": "receptacle",
+      "machine_path": null
+    }
+  ],
+  "task_effects": [],
+  "grounding": {
+    "legacy_symbol_aliases": {},
+    "symbols": {
+      "receptacle": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "cutting_board"
+      },
+      "bowl": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "bowl"
+      },
+      "condiment": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "condiment"
+      },
+      "lime": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "lime"
+      },
+      "garlic": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "garlic"
+      },
+      "cabinet": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "object_id": "bowl",
+        "fixture_type": "cabinet_double_door"
+      },
+      "counter": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "fixture_type": "counter"
+      }
+    }
+  },
+  "example_trajectory": {
+    "agents": [
+      {
+        "agent": "agent_0"
+      },
+      {
+        "agent": "agent_1"
+      }
+    ],
+    "steps": [
+      {
+        "step": 0,
+        "agent": "agent_0",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_1",
+          "message": "I will handle the cabinet items while you prep the cutting board."
+        },
+        "reasoning": "Coordinating task division."
+      },
+      {
+        "step": 1,
+        "agent": "agent_1",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_0",
+          "message": "Understood. I'll start moving the lime and garlic to the cutting board."
+        },
+        "reasoning": "Acknowledging the plan."
+      },
+      {
+        "step": 2,
+        "agent": "agent_0",
+        "tool": "open_hinged_part",
+        "args": {
+          "target_id": "cabinet",
+          "part_id": "hinged"
+        },
+        "reasoning": "Opening cabinet to access bowl and condiment."
+      },
+      {
+        "step": 3,
+        "agent": "agent_1",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "lime",
+          "source_id": "counter"
+        },
+        "reasoning": "Picking up lime from counter."
+      },
+      {
+        "step": 4,
+        "agent": "agent_1",
+        "tool": "place_on_object",
+        "args": {
+          "object_id": "lime",
+          "support_object_id": "receptacle"
+        },
+        "reasoning": "Placing lime on cutting board."
+      },
+      {
+        "step": 5,
+        "agent": "agent_0",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "bowl",
+          "source_id": "cabinet"
+        },
+        "reasoning": "Picking up bowl from cabinet."
+      },
+      {
+        "step": 6,
+        "agent": "agent_1",
+        "tool": "give_space",
+        "args": {
+          "fixture_id": "counter"
+        },
+        "reasoning": "Clearing a shared fixture already occupied by this agent before the other agent uses it."
+      },
+      {
+        "step": 7,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "counter"
+        },
+        "reasoning": "Moving to counter to place bowl."
+      },
+      {
+        "step": 8,
+        "agent": "agent_0",
+        "tool": "place_on_surface",
+        "args": {
+          "object_id": "bowl",
+          "support_id": "counter"
+        },
+        "reasoning": "Placing bowl on counter."
+      },
+      {
+        "step": 9,
+        "agent": "agent_0",
+        "tool": "give_space",
+        "args": {
+          "fixture_id": "counter"
+        },
+        "reasoning": "Clearing a shared fixture already occupied by this agent before the other agent uses it."
+      },
+      {
+        "step": 10,
+        "agent": "agent_1",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "garlic",
+          "source_id": "counter"
+        },
+        "reasoning": "Picking up garlic from counter."
+      },
+      {
+        "step": 11,
+        "agent": "agent_1",
+        "tool": "place_on_object",
+        "args": {
+          "object_id": "garlic",
+          "support_object_id": "receptacle"
+        },
+        "reasoning": "Placing garlic on cutting board."
+      },
+      {
+        "step": 12,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "cabinet"
+        },
+        "reasoning": "Returning to cabinet for condiment."
+      },
+      {
+        "step": 13,
+        "agent": "agent_0",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "condiment",
+          "source_id": "cabinet"
+        },
+        "reasoning": "Picking up condiment."
+      },
+      {
+        "step": 14,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "counter"
+        },
+        "reasoning": "Moving to counter to place condiment."
+      },
+      {
+        "step": 15,
+        "agent": "agent_0",
+        "tool": "place_on_surface",
+        "args": {
+          "object_id": "condiment",
+          "support_id": "counter"
+        },
+        "reasoning": "Placing condiment on counter."
+      }
+    ]
+  },
+  "notes": []
+}

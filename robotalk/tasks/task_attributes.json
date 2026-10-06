@@ -1,0 +1,376 @@
+{
+  "source": "RoboCasa365 docs/composite_tasks/task_attributes.json (upstream commit 1b19563), filtered to the 53 RoboTalk tasks",
+  "tasks": [
+    {
+      "name": "CutBuffetPizza",
+      "activity": "Arranging Buffet",
+      "num_subtasks": 2,
+      "moma_required": "Yes",
+      "description": "Take the pizza cutter from the drawer on the *left/right* and place it on the dining counter for cutting."
+    },
+    {
+      "name": "TongBuffetSetup",
+      "activity": "Arranging Buffet",
+      "num_subtasks": 4,
+      "moma_required": "Yes",
+      "description": "Take the tongs from the drawer on the *left/right* and place them on the dining counter next to the tray containing the [*food*]."
+    },
+    {
+      "name": "LineUpCondiments",
+      "activity": "Arranging Condiments",
+      "num_subtasks": 7,
+      "moma_required": "Yes",
+      "description": "Take two condiments from the cabinet and move them on the counter near the stove. Make sure the condiments are lined up with each other, next to each other."
+    },
+    {
+      "name": "OrganizeCondiments",
+      "activity": "Arranging Condiments",
+      "num_subtasks": 3,
+      "moma_required": "Yes",
+      "description": "There are various items on the counter. Only move the condiments/shakers into the cabinet."
+    },
+    {
+      "name": "ArrangeTea",
+      "activity": "Brewing",
+      "num_subtasks": 3,
+      "moma_required": "No",
+      "description": "Pick the kettle from the counter and place it on the tray. Then pick the mug from the cabinet and place it on the tray. Then close the cabinet doors."
+    },
+    {
+      "name": "PrepareCoffee",
+      "activity": "Brewing",
+      "num_subtasks": 2,
+      "moma_required": "No",
+      "description": "Pick the mug from the cabinet, place it under the coffee machine dispenser, and press the start button."
+    },
+    {
+      "name": "SweetenCoffee",
+      "activity": "Brewing",
+      "num_subtasks": 5,
+      "moma_required": "Yes",
+      "description": "Take a sugar cube from the saucer and place it inside the coffee. Then, grab milk from the fridge and place it next to the coffee on the counter to sweeten the coffee."
+    },
+    {
+      "name": "ClusterItemsForClearing",
+      "activity": "Clearing Table",
+      "num_subtasks": 7,
+      "moma_required": "Yes",
+      "description": "Move the [*tableware1*] to cluster with the [*tableware2*] on the dining counter for efficient clearing."
+    },
+    {
+      "name": "BowlAndCup",
+      "activity": "Clearing Table",
+      "num_subtasks": 4,
+      "moma_required": "Yes",
+      "description": "Place the cup inside the bowl on the dining table and move the bowl to any counter."
+    },
+    {
+      "name": "CandleCleanup",
+      "activity": "Clearing Table",
+      "num_subtasks": 8,
+      "moma_required": "Yes",
+      "description": "Pick the [*decorations*] from the dining table and place them in the open cabinet. Close the cabinet after placing the objects."
+    },
+    {
+      "name": "CondimentCollection",
+      "activity": "Clearing Table",
+      "num_subtasks": 2,
+      "moma_required": "Yes",
+      "description": "Pick the [*condiments*] from the counter and place them in the cabinet."
+    },
+    {
+      "name": "DessertAssembly",
+      "activity": "Clearing Table",
+      "num_subtasks": 2,
+      "moma_required": "Yes",
+      "description": "Place the [*container*] with [*dessert*] and the cupcake onto the tray."
+    },
+    {
+      "name": "DisplayMeatVariety",
+      "activity": "Filling Serving Dishes",
+      "num_subtasks": 11,
+      "moma_required": "Yes",
+      "description": "Retrieve the chicken, shrimp, and steak from the fridge and place them on the serving tray on the dining counter."
+    },
+    {
+      "name": "MeatSkewerAssembly",
+      "activity": "Filling Serving Dishes",
+      "num_subtasks": 2,
+      "moma_required": "No",
+      "description": "Move the kebab skewers from the plate to the oven tray for oven preparation."
+    },
+    {
+      "name": "GarnishCake",
+      "activity": "Garnishing Dishes",
+      "num_subtasks": 2,
+      "moma_required": "Yes",
+      "description": "Place one cherry either on top of the cake or on the cake plate, next to the cake. Then place one strawberry on the cake plate, next to the cake."
+    },
+    {
+      "name": "AddLemonToFish",
+      "activity": "Garnishing Dishes",
+      "num_subtasks": 4,
+      "moma_required": "Yes",
+      "description": "Take the lemon from the fridge and place it on the plate with fish on the dining counter."
+    },
+    {
+      "name": "AddSugarCubes",
+      "activity": "Garnishing Dishes",
+      "num_subtasks": 2,
+      "moma_required": "No",
+      "description": "Take the two sugar cubes and place them on the plate with the cake."
+    },
+    {
+      "name": "GarnishCupcake",
+      "activity": "Garnishing Dishes",
+      "num_subtasks": 4,
+      "moma_required": "Yes",
+      "description": "Take the cinnamon bottle from the cabinet and place it on the dining table, next to the plate with the cupcake. Then take the chocolate from the dining counter and place it on the cupcake plate."
+    },
+    {
+      "name": "GarnishPancake",
+      "activity": "Garnishing Dishes",
+      "num_subtasks": 4,
+      "moma_required": "Yes",
+      "description": "Take the strawberry from the fridge and place it on top of the pancake, located on the dining counter."
+    },
+    {
+      "name": "PrepareCheeseStation",
+      "activity": "Making Salads",
+      "num_subtasks": 4,
+      "moma_required": "Yes",
+      "description": "Pick the cheese from the fridge and the cheese grater from the cabinet and place them next to the salad bowl."
+    },
+    {
+      "name": "CheeseMixing",
+      "activity": "Mixing Ingredients",
+      "num_subtasks": 2,
+      "moma_required": "Yes",
+      "description": "Put the cheese in the pot filled with milk and stir."
+    },
+    {
+      "name": "ColorfulSalsa",
+      "activity": "Mixing and Blending",
+      "num_subtasks": 4,
+      "moma_required": "No",
+      "description": "Place the avocado, onion, tomato, and bell pepper on the cutting board."
+    },
+    {
+      "name": "SpicyMarinade",
+      "activity": "Mixing and Blending",
+      "num_subtasks": 5,
+      "moma_required": "No",
+      "description": "Open the cabinet. Place the bowl and condiment on the counter. Then place the lime and garlic on the cutting board."
+    },
+    {
+      "name": "PlateStoreDinner",
+      "activity": "Plating Food",
+      "num_subtasks": 8,
+      "moma_required": "Yes",
+      "description": "Place one of the steaks on the plate and the other in the bowl. Then place the bowl in the fridge."
+    },
+    {
+      "name": "DistributeChicken",
+      "activity": "Portioning Meals",
+      "num_subtasks": 7,
+      "moma_required": "Yes",
+      "description": "Take the chicken drumsticks from the pan and place one on each plate on the dining counter."
+    },
+    {
+      "name": "PortionHotDogs",
+      "activity": "Portioning Meals",
+      "num_subtasks": 4,
+      "moma_required": "Yes",
+      "description": "Place one bun and one sausage from the bowl on each plate."
+    },
+    {
+      "name": "PortionYogurt",
+      "activity": "Portioning Meals",
+      "num_subtasks": 4,
+      "moma_required": "Yes",
+      "description": "Place two yogurt containers on each plate."
+    },
+    {
+      "name": "PrepareSandwichStation",
+      "activity": "Preparing Sandwiches",
+      "num_subtasks": 7,
+      "moma_required": "Yes",
+      "description": "Carry the bowl containing the sandwich ingredients from the fridge and place it on the counter near the toaster oven. Next, pick up the baguette from the fridge and place it near the toaster oven as well."
+    },
+    {
+      "name": "GatherMarinadeIngredients",
+      "activity": "Preparing Marinade",
+      "num_subtasks": 6,
+      "moma_required": "Yes",
+      "description": "Retrieve the bottle and the shaker from the cabinet and place them next to the mixing bowl on the counter. Then add garlic from the fridge to the mixing bowl."
+    },
+    {
+      "name": "HotDogSetup",
+      "activity": "Preparing Sandwiches",
+      "num_subtasks": 12,
+      "moma_required": "Yes",
+      "description": "Move the hot dog bun to the plate on the dining table and place the [*condiment*] next to that plate. Then navigate to the fridge and take the sausage and place it on the plate as well."
+    },
+    {
+      "name": "PrepareSausageCheese",
+      "activity": "Preparing Sandwiches",
+      "num_subtasks": 8,
+      "moma_required": "Yes",
+      "description": "Retrieve the sausage and cheese from the fridge and place them on the cutting board on the counter."
+    },
+    {
+      "name": "LemonSeasoningFish",
+      "activity": "Seasoning Food",
+      "num_subtasks": 2,
+      "moma_required": "Yes",
+      "description": "Retrieve a lemon from the fridge and place it on the cutting board with the fish."
+    },
+    {
+      "name": "SeasoningSteak",
+      "activity": "Seasoning Food",
+      "num_subtasks": 3,
+      "moma_required": "Yes",
+      "description": "Retrieve the shaker from the cabinet and place it next the steak on a plate on the dining table."
+    },
+    {
+      "name": "SetUpSpiceStation",
+      "activity": "Seasoning Food",
+      "num_subtasks": 11,
+      "moma_required": "Yes",
+      "description": "Collect the [*spice*], [*bottle*], and [*shaker*] from the cabinet and place them next to the stove."
+    },
+    {
+      "name": "ServeMealJuice",
+      "activity": "Serving Beverages",
+      "num_subtasks": 7,
+      "moma_required": "Yes",
+      "description": "Pick up the orange juice cups from the counter and place one next to each plate on the dining counter."
+    },
+    {
+      "name": "AlcoholServingPrep",
+      "activity": "Serving Beverages",
+      "num_subtasks": 8,
+      "moma_required": "Yes",
+      "description": "Open the cabinet directly in front. Then move the [*alcohol*] and the [*cup*] to the dining counter with the [*decoration*] on it."
+    },
+    {
+      "name": "DeliverStraw",
+      "activity": "Serving Beverages",
+      "num_subtasks": 4,
+      "moma_required": "Yes",
+      "description": "Take a straw from the drawer in front and place it inside the glass cup on the dining counter."
+    },
+    {
+      "name": "MatchCupAndDrink",
+      "activity": "Serving Beverages",
+      "num_subtasks": 7,
+      "moma_required": "Yes",
+      "description": "There is a wine glass and glass cup on the dining counter. Place the wine bottle next to the wine glass and the juice bottle next to the glass cup."
+    },
+    {
+      "name": "PrepareCocktailStation",
+      "activity": "Serving Beverages",
+      "num_subtasks": 12,
+      "moma_required": "Yes",
+      "description": "There is a bowl on the dining counter. Grab a lemon wedge from the fridge and place it in the bowl. Then get the liquor bottle and glass cup from the cabinet and place them next to the bowl."
+    },
+    {
+      "name": "PrepareDrinkStation",
+      "activity": "Serving Beverages",
+      "num_subtasks": 11,
+      "moma_required": "Yes",
+      "description": "There is a tray on the dining counter. Grab the cup, mug, and pitcher and place them on the tray. The pitcher may be placed next to the tray if it cannot fit the tray."
+    },
+    {
+      "name": "SetupSodaBowl",
+      "activity": "Serving Beverages",
+      "num_subtasks": 8,
+      "moma_required": "Yes",
+      "description": "Open the fridge, grab two sodas, and place both sodas inside the bowl with ice on the dining counter."
+    },
+    {
+      "name": "PrepareSoupServing",
+      "activity": "Serving Food",
+      "num_subtasks": 3,
+      "moma_required": "Yes",
+      "description": "Open the cabinet and move the ladle to the pot. Then close the cabinet."
+    },
+    {
+      "name": "ServeSteak",
+      "activity": "Serving Food",
+      "num_subtasks": 4,
+      "moma_required": "Yes",
+      "description": "Pick up the pan with the steak in it and place it on the dining table. Then place the steak on the plate."
+    },
+    {
+      "name": "ArrangeBreadBowl",
+      "activity": "Setting the Table",
+      "num_subtasks": 5,
+      "moma_required": "Yes",
+      "description": "Pick up the heated [*bread*] from the toaster oven and place it in the bowl. Then move the bread bowl to the dining counter."
+    },
+    {
+      "name": "ArrangeDrinkware",
+      "activity": "Setting the Table",
+      "num_subtasks": 7,
+      "moma_required": "Yes",
+      "description": "Place the pitcher and cup on the dining counter for serving."
+    },
+    {
+      "name": "AlignSilverware",
+      "activity": "Setting the Table",
+      "num_subtasks": 7,
+      "moma_required": "Yes",
+      "description": "Take the fork and place it on the left side of the plate. Then take the spoon and place it on the right side of the plate. Make sure they're directly next to the plate."
+    },
+    {
+      "name": "BeverageOrganization",
+      "activity": "Setting the Table",
+      "num_subtasks": 7,
+      "moma_required": "Yes",
+      "description": "Move the drinks to the dining counter."
+    },
+    {
+      "name": "DateNight",
+      "activity": "Setting the Table",
+      "num_subtasks": 8,
+      "moma_required": "Yes",
+      "description": "Get the [*decoration*] and the [*alcohol*] from the cabinet and move them to the dining counter."
+    },
+    {
+      "name": "SetBowlsForSoup",
+      "activity": "Setting the Table",
+      "num_subtasks": 8,
+      "moma_required": "Yes",
+      "description": "Move the bowls from the cabinet to the plates on the dining table."
+    },
+    {
+      "name": "SetupBowls",
+      "activity": "Setting the Table",
+      "num_subtasks": 7,
+      "moma_required": "Yes",
+      "description": "Pick up the bowls from the cabinet and place each bowl in front of a stool on the dining counter."
+    },
+    {
+      "name": "SetupButterPlate",
+      "activity": "Setting the Table",
+      "num_subtasks": 8,
+      "moma_required": "Yes",
+      "description": "Retrieve the butter from the fridge and place it on a plate on the dining table. Then retrieve the butter knife by the fridge and place it near the plate."
+    },
+    {
+      "name": "SetupWineGlasses",
+      "activity": "Setting the Table",
+      "num_subtasks": 7,
+      "moma_required": "Yes",
+      "description": "Retrieve the wine glasses from the counter and place one next to each plate."
+    },
+    {
+      "name": "VeggieDipPrep",
+      "activity": "Snack Preparation",
+      "num_subtasks": 3,
+      "moma_required": "Yes",
+      "description": "Place the two vegetables and bowl onto the tray for setting up a vegetable dip station."
+    }
+  ]
+}

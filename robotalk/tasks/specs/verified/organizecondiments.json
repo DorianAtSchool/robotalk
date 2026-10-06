@@ -1,0 +1,428 @@
+{
+  "spec_version": 1,
+  "composite_task": "OrganizeCondiments",
+  "source_python_module": "robocasa.environments.kitchen.composite.arranging_condiments.organize_condiments",
+  "agent_ids": [
+    "agent_0",
+    "agent_1"
+  ],
+  "max_reasoning_chars": 200,
+  "validator_checks": [
+    "initial_communication",
+    "allowed_tools",
+    "navigation_preconditions",
+    "manipulation_preconditions",
+    "effects",
+    "final_success"
+  ],
+  "preflight_token_estimate": {
+    "prompt_tokens": 3000,
+    "output_tokens": 3500,
+    "reasoning_tokens": 0
+  },
+  "initial_state": {
+    "agents": {
+      "agent_0": {
+        "location": "counter",
+        "held_object": null
+      },
+      "agent_1": {
+        "location": "counter",
+        "held_object": null
+      }
+    },
+    "objects": {
+      "condiment1": {
+        "object_type": "condiment",
+        "location": "counter"
+      },
+      "condiment2": {
+        "object_type": "shaker",
+        "location": "counter"
+      },
+      "condiment3": {
+        "object_type": "condiment",
+        "location": "counter"
+      }
+    },
+    "fixtures": {
+      "cab": {
+        "fixture_type": "cabinet",
+        "parts": {
+          "hinged": {
+            "part_type": "hinged_part",
+            "state": "open"
+          }
+        },
+        "controls": {},
+        "parent_fixture": "counter"
+      },
+      "counter": {
+        "fixture_type": "counter",
+        "parts": {},
+        "controls": {}
+      }
+    },
+    "machine_state": {
+      "organize_condiments": {}
+    }
+  },
+  "allowed_tool_specs": {
+    "communicate": {
+      "description": "Send a short coordination message to the other agent in the scene. args.to must be that agent's exact ID. Set args.releases to the exact symbolic id of a thing you have finished with and are handing over -- that, and only that, wakes a partner who is waiting on it. Omit args.releases from every other message. args.releases must be an object id or a fixture id that appears in initial_state, copied exactly. It names a THING, never an event or a status: 'coffee_machine' and 'mug' are ids; 'mug_placed', 'counter_free' and 'task_done' are not, and an id that does not exist releases nothing at all. coordination_phase is optional and must be omitted from ordinary messages. Use it only for the opening propose/await_plan/await_confirmation/confirm handshake or for portion_complete.",
+      "tool_args": [
+        "to",
+        "message"
+      ],
+      "optional_tool_args": [
+        "releases",
+        "coordination_phase"
+      ],
+      "tool_arg_types": {
+        "coordination_phase": "STRING"
+      },
+      "allowed_arg_values": {
+        "coordination_phase": [
+          "propose",
+          "await_plan",
+          "await_confirmation",
+          "confirm",
+          "portion_complete"
+        ]
+      }
+    },
+    "wait_for_signal": {
+      "description": "Pause until the other agent hands over what you are waiting for. args.about names that thing by its exact symbolic id -- an object id or a fixture id that appears in initial_state, copied exactly. It is a THING you are waiting FOR, never an event you are waiting ON: wait about='coffee_machine', never about='mug_placed' or 'your_turn'. An id that is not in initial_state can never be released, so the wait blocks forever and the whole plan is thrown away. You stay paused until args.from sends a communicate whose args.releases names the same id -- their other messages do not wake you, so you do not need to wait again after an unrelated one.",
+      "tool_args": [
+        "from",
+        "about"
+      ]
+    },
+    "navigate_to_fixture": {
+      "description": "Move the robot base to the working pose of a fixture.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "cab",
+        "counter"
+      ]
+    },
+    "pick_up_object": {
+      "description": "Grasp and lift an object from a symbolic source region.",
+      "tool_args": [
+        "object_id",
+        "source_id"
+      ],
+      "optional_tool_args": [
+        "source_site_id"
+      ],
+      "allowed_object_ids": [
+        "condiment1",
+        "condiment2",
+        "condiment3"
+      ],
+      "allowed_source_ids": [
+        "counter"
+      ]
+    },
+    "place_in_receptacle": {
+      "description": "Place an object into an interior or container-like receptacle. Use target_site_id separately when the exact basin, bowl, rack, shelf, slot, or tray matters.",
+      "tool_args": [
+        "object_id"
+      ],
+      "tool_arg_any_of": [
+        [
+          "target_id",
+          "receptacle_id"
+        ]
+      ],
+      "optional_tool_args": [
+        "target_id",
+        "receptacle_id",
+        "target_site_id",
+        "relative_position"
+      ],
+      "allowed_object_ids": [
+        "condiment1",
+        "condiment2",
+        "condiment3"
+      ],
+      "allowed_receptacle_ids": [
+        "cab"
+      ]
+    },
+    "give_space": {
+      "description": "Yield working room at a fixture so the other agent can complete an action there.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "cab",
+        "counter"
+      ]
+    },
+    "open_hinged_part": {
+      "description": "Open a hinged door, lid, or articulated head on a fixture.",
+      "tool_args": [
+        "target_id",
+        "part_id"
+      ],
+      "allowed_target_ids": [
+        "cab"
+      ],
+      "allowed_part_ids": [
+        "hinged"
+      ]
+    }
+  },
+  "task_goal": "Move the three condiments from the counter into the cabinet.",
+  "extra_execution_rules": [
+    "Inspect cab.hinged in the initial state. If it is closed, it must be opened by an empty-handed agent before placing condiments into cab. An agent holding a condiment must first place it at a valid temporary location before opening cab. Prefer opening cab before picking up condiments when this avoids unnecessary actions.",
+    "cab is exclusive: agents place their assigned condiments inside one at a time. After finishing at cab, the current user must call give_space(cab), and the other agent may enter or use cab only on the following tick.",
+    "Do not move the distractor object on the counter."
+  ],
+  "initial_public_state": {
+    "condiment1_location": "counter",
+    "condiment2_location": "counter",
+    "condiment3_location": "counter"
+  },
+  "task_preconditions": [
+    {
+      "kind": "fixture_part_state_required_for_action",
+      "tool": "place_in_receptacle",
+      "fixture_id": "cab",
+      "part_id": "hinged",
+      "required_state": "open",
+      "arg_name": "receptacle_id",
+      "arg_value": "cab",
+      "message": "The cabinet must be open to place items inside."
+    }
+  ],
+  "goal_conditions": [
+    {
+      "kind": "object_at_location",
+      "object_id": "condiment1",
+      "location": "cab",
+      "machine_path": null
+    },
+    {
+      "kind": "object_at_location",
+      "object_id": "condiment2",
+      "location": "cab",
+      "machine_path": null
+    },
+    {
+      "kind": "object_at_location",
+      "object_id": "condiment3",
+      "location": "cab",
+      "machine_path": null
+    }
+  ],
+  "task_effects": [],
+  "grounding": {
+    "legacy_symbol_aliases": {},
+    "symbols": {
+      "condiment1": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "condiment"
+      },
+      "condiment2": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "shaker"
+      },
+      "condiment3": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "condiment"
+      },
+      "cab": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "fixture_type": "cabinet"
+      },
+      "counter": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "object_id": "condiment1",
+        "fixture_type": "counter"
+      }
+    }
+  },
+  "example_trajectory": {
+    "agents": [
+      {
+        "agent": "agent_0"
+      },
+      {
+        "agent": "agent_1"
+      }
+    ],
+    "steps": [
+      {
+        "step": 0,
+        "agent": "agent_0",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_1",
+          "message": "I will move the first two condiments to the cabinet."
+        },
+        "reasoning": "Coordinating task division."
+      },
+      {
+        "step": 1,
+        "agent": "agent_1",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_0",
+          "message": "I will move the third condiment."
+        },
+        "reasoning": "Acknowledging the plan."
+      },
+      {
+        "step": 2,
+        "agent": "agent_1",
+        "tool": "give_space",
+        "args": {
+          "fixture_id": "counter"
+        },
+        "reasoning": "Clearing a shared fixture already occupied by this agent before the other agent uses it."
+      },
+      {
+        "step": 3,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "counter"
+        },
+        "reasoning": "Approaching the condiments."
+      },
+      {
+        "step": 4,
+        "agent": "agent_0",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "condiment1",
+          "source_id": "counter"
+        },
+        "reasoning": "Picking up the first condiment."
+      },
+      {
+        "step": 5,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "cab"
+        },
+        "reasoning": "Moving to the cabinet."
+      },
+      {
+        "step": 6,
+        "agent": "agent_0",
+        "tool": "place_in_receptacle",
+        "args": {
+          "object_id": "condiment1",
+          "receptacle_id": "cab"
+        },
+        "reasoning": "Placing the first condiment in the cabinet."
+      },
+      {
+        "step": 7,
+        "agent": "agent_0",
+        "tool": "give_space",
+        "args": {
+          "fixture_id": "cab"
+        },
+        "reasoning": "Clearing the area for the next placement."
+      },
+      {
+        "step": 8,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "counter"
+        },
+        "reasoning": "Returning to the counter."
+      },
+      {
+        "step": 9,
+        "agent": "agent_0",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "condiment2",
+          "source_id": "counter"
+        },
+        "reasoning": "Picking up the second condiment."
+      },
+      {
+        "step": 10,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "cab"
+        },
+        "reasoning": "Moving to the cabinet."
+      },
+      {
+        "step": 11,
+        "agent": "agent_0",
+        "tool": "place_in_receptacle",
+        "args": {
+          "object_id": "condiment2",
+          "receptacle_id": "cab"
+        },
+        "reasoning": "Placing the second condiment in the cabinet."
+      },
+      {
+        "step": 12,
+        "agent": "agent_0",
+        "tool": "give_space",
+        "args": {
+          "fixture_id": "cab"
+        },
+        "reasoning": "Clearing the area for agent_1."
+      },
+      {
+        "step": 13,
+        "agent": "agent_1",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "counter"
+        },
+        "reasoning": "Approaching the counter."
+      },
+      {
+        "step": 14,
+        "agent": "agent_1",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "condiment3",
+          "source_id": "counter"
+        },
+        "reasoning": "Picking up the third condiment."
+      },
+      {
+        "step": 15,
+        "agent": "agent_1",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "cab"
+        },
+        "reasoning": "Moving to the cabinet."
+      },
+      {
+        "step": 16,
+        "agent": "agent_1",
+        "tool": "place_in_receptacle",
+        "args": {
+          "object_id": "condiment3",
+          "receptacle_id": "cab"
+        },
+        "reasoning": "Placing the final condiment in the cabinet."
+      }
+    ]
+  },
+  "notes": []
+}

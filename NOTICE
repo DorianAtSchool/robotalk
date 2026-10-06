@@ -1,0 +1,17 @@
+RoboTalk
+Copyright (c) 2026 The RoboTalk Authors
+
+This project is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+It includes a modified copy of RoboCasa365 (https://github.com/robocasa/robocasa)
+in robocasa/:
+  - RoboCasa365 code: Copyright (c) 2026 the RoboCasa Team, MIT License
+    (see robocasa/LICENSE).
+  - Our changes to the RoboCasa365 code are listed in docs/FORK_CHANGES.md.
+  - RoboCasa365 kitchen assets (CC BY 4.0, (c) the RoboCasa Team) are not
+    redistributed here; they are downloaded separately and are unmodified.
+
+It depends on robosuite (https://github.com/ARISE-Initiative/robosuite, MIT
+License), installed from https://github.com/DorianAtSchool/robosuite: upstream
+plus one change that names each robot's manipulator_mount body uniquely, for
+scenes with two mobile manipulators.

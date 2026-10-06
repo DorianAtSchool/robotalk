@@ -1,0 +1,369 @@
+{
+  "spec_version": 1,
+  "composite_task": "CheeseMixing",
+  "source_python_module": "robocasa.environments.kitchen.composite.mixing_ingredients.cheese_mixing",
+  "agent_ids": [
+    "agent_0",
+    "agent_1"
+  ],
+  "max_reasoning_chars": 200,
+  "validator_checks": [
+    "initial_communication",
+    "allowed_tools",
+    "navigation_preconditions",
+    "manipulation_preconditions",
+    "effects",
+    "final_success"
+  ],
+  "preflight_token_estimate": {
+    "prompt_tokens": 3000,
+    "output_tokens": 3500,
+    "reasoning_tokens": 0
+  },
+  "initial_state": {
+    "agents": {
+      "agent_0": {
+        "location": "counter",
+        "held_object": null
+      },
+      "agent_1": {
+        "location": "stove",
+        "held_object": null
+      }
+    },
+    "objects": {
+      "spatula": {
+        "object_type": "spatula",
+        "location": "counter"
+      },
+      "cheese_plate": {
+        "object_type": "plate",
+        "location": "counter"
+      },
+      "cheese": {
+        "object_type": "cheese",
+        "location": "cheese_plate"
+      },
+      "pot": {
+        "object_type": "pot",
+        "location": "stove"
+      }
+    },
+    "fixtures": {
+      "stove": {
+        "fixture_type": "stove",
+        "controls": {
+          "knob_id": {
+            "control_type": "rotary_control",
+            "state": "on"
+          }
+        },
+        "parts": {}
+      },
+      "counter": {
+        "fixture_type": "counter",
+        "parts": {},
+        "controls": {}
+      }
+    },
+    "machine_state": {
+      "stirring_check": {
+        "stirred": false
+      }
+    }
+  },
+  "allowed_tool_specs": {
+    "communicate": {
+      "description": "Send a short coordination message to the other agent in the scene. args.to must be that agent's exact ID. Set args.releases to the exact symbolic id of a thing you have finished with and are handing over -- that, and only that, wakes a partner who is waiting on it. Omit args.releases from every other message. args.releases must be an object id or a fixture id that appears in initial_state, copied exactly. It names a THING, never an event or a status: 'coffee_machine' and 'mug' are ids; 'mug_placed', 'counter_free' and 'task_done' are not, and an id that does not exist releases nothing at all. coordination_phase is optional and must be omitted from ordinary messages. Use it only for the opening propose/await_plan/await_confirmation/confirm handshake or for portion_complete.",
+      "tool_args": [
+        "to",
+        "message"
+      ],
+      "optional_tool_args": [
+        "releases",
+        "coordination_phase"
+      ],
+      "tool_arg_types": {
+        "coordination_phase": "STRING"
+      },
+      "allowed_arg_values": {
+        "coordination_phase": [
+          "propose",
+          "await_plan",
+          "await_confirmation",
+          "confirm",
+          "portion_complete"
+        ]
+      }
+    },
+    "wait_for_signal": {
+      "description": "Pause until the other agent hands over what you are waiting for. args.about names that thing by its exact symbolic id -- an object id or a fixture id that appears in initial_state, copied exactly. It is a THING you are waiting FOR, never an event you are waiting ON: wait about='coffee_machine', never about='mug_placed' or 'your_turn'. An id that is not in initial_state can never be released, so the wait blocks forever and the whole plan is thrown away. You stay paused until args.from sends a communicate whose args.releases names the same id -- their other messages do not wake you, so you do not need to wait again after an unrelated one.",
+      "tool_args": [
+        "from",
+        "about"
+      ]
+    },
+    "navigate_to_fixture": {
+      "description": "Move the robot base to the working pose of a fixture.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "stove",
+        "counter"
+      ]
+    },
+    "pick_up_object": {
+      "description": "Grasp and lift an object from a symbolic source region.",
+      "tool_args": [
+        "object_id",
+        "source_id"
+      ],
+      "optional_tool_args": [
+        "source_site_id"
+      ],
+      "allowed_object_ids": [
+        "cheese",
+        "spatula"
+      ],
+      "allowed_source_ids": [
+        "cheese_plate",
+        "counter"
+      ]
+    },
+    "place_in_receptacle": {
+      "description": "Place an object into an interior or container-like receptacle. Use target_site_id separately when the exact basin, bowl, rack, shelf, slot, or tray matters.",
+      "tool_args": [
+        "object_id"
+      ],
+      "tool_arg_any_of": [
+        [
+          "target_id",
+          "receptacle_id"
+        ]
+      ],
+      "optional_tool_args": [
+        "target_id",
+        "receptacle_id",
+        "target_site_id",
+        "relative_position"
+      ],
+      "allowed_object_ids": [
+        "cheese",
+        "spatula"
+      ],
+      "allowed_receptacle_ids": [
+        "pot"
+      ]
+    },
+    "give_space": {
+      "description": "Yield working room at a fixture so the other agent can complete an action there.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "stove",
+        "counter"
+      ]
+    }
+  },
+  "task_goal": "Put both the cheese and the spatula in the pot filled with milk. Placing the spatula in the pot counts as stirring.",
+  "extra_execution_rules": [
+    "The pot must remain on the stove burner corresponding to the active knob.",
+    "There is no separate stir tool: placing the spatula in the pot is enough to represent stirring. The cheese and spatula may be placed in either order."
+  ],
+  "initial_public_state": {
+    "cheese_location": "cheese_plate",
+    "pot_location": "stove",
+    "stirred": false
+  },
+  "task_preconditions": [
+    {
+      "kind": "object_must_remain_at_location",
+      "object_id": "pot",
+      "location": "stove",
+      "message": "The pot must stay on the stove burner."
+    }
+  ],
+  "goal_conditions": [
+    {
+      "kind": "object_at_location",
+      "object_id": "cheese",
+      "location": "pot",
+      "machine_path": null
+    },
+    {
+      "kind": "machine_flag_true",
+      "machine_path": [
+        "stirring_check",
+        "stirred"
+      ]
+    },
+    {
+      "kind": "object_at_location",
+      "object_id": "spatula",
+      "location": "pot",
+      "machine_path": null
+    }
+  ],
+  "task_effects": [
+    {
+      "kind": "set_machine_flag_on_action",
+      "tool": "place_in_receptacle",
+      "args": {
+        "object_id": "spatula",
+        "receptacle_id": "pot"
+      },
+      "machine_path": [
+        "stirring_check",
+        "stirred"
+      ],
+      "value": true
+    }
+  ],
+  "grounding": {
+    "legacy_symbol_aliases": {},
+    "symbols": {
+      "spatula": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "spatula"
+      },
+      "cheese_plate": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "plate"
+      },
+      "cheese": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "cheese"
+      },
+      "pot": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "pot"
+      },
+      "stove": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "fixture_type": "stove"
+      },
+      "counter": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "object_id": "spatula",
+        "fixture_type": "counter"
+      }
+    }
+  },
+  "example_trajectory": {
+    "agents": [
+      {
+        "agent": "agent_0"
+      },
+      {
+        "agent": "agent_1"
+      }
+    ],
+    "steps": [
+      {
+        "step": 0,
+        "agent": "agent_0",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_1",
+          "message": "I will put the cheese in the pot."
+        },
+        "reasoning": "Coordinating the first step of the recipe."
+      },
+      {
+        "step": 1,
+        "agent": "agent_1",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_0",
+          "message": "I will grab the spatula and stir once you are done."
+        },
+        "reasoning": "Coordinating the second step."
+      },
+      {
+        "step": 2,
+        "agent": "agent_1",
+        "tool": "give_space",
+        "args": {
+          "fixture_id": "counter"
+        },
+        "reasoning": "Clearing a shared fixture already occupied by this agent before the other agent uses it."
+      },
+      {
+        "step": 3,
+        "agent": "agent_0",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "cheese",
+          "source_id": "cheese_plate"
+        },
+        "reasoning": "Picking up the cheese to add to the pot."
+      },
+      {
+        "step": 4,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "stove"
+        },
+        "reasoning": "Moving to the stove to place the cheese."
+      },
+      {
+        "step": 5,
+        "agent": "agent_0",
+        "tool": "place_in_receptacle",
+        "args": {
+          "object_id": "cheese",
+          "receptacle_id": "pot"
+        },
+        "reasoning": "Placing cheese into the pot."
+      },
+      {
+        "step": 6,
+        "agent": "agent_0",
+        "tool": "give_space",
+        "args": {
+          "fixture_id": "stove"
+        },
+        "reasoning": "Clearing the stove area for the other agent to stir."
+      },
+      {
+        "step": 7,
+        "agent": "agent_1",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "spatula",
+          "source_id": "counter"
+        },
+        "reasoning": "Picking up the spatula for stirring."
+      },
+      {
+        "step": 8,
+        "agent": "agent_1",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "stove"
+        },
+        "reasoning": "Moving to the stove to stir."
+      },
+      {
+        "step": 9,
+        "agent": "agent_1",
+        "tool": "place_in_receptacle",
+        "args": {
+          "object_id": "spatula",
+          "receptacle_id": "pot"
+        },
+        "reasoning": "Stirring the cheese in the pot with the spatula."
+      }
+    ]
+  },
+  "notes": []
+}

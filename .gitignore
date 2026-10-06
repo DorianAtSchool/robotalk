@@ -1,0 +1,68 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+.cache/
+
+# Environments and local settings
+.venv/
+venv/
+.env
+.python-version
+.idea/
+.vscode/
+.DS_Store
+
+# MuJoCo / RoboCasa runtime files
+MUJOCO_LOG.TXT
+macros_private.py
+.mujocomanip_temp_model.xml
+
+# Reproduction data and outputs (see README)
+/data/
+/outputs/
+
+# RoboCasa365 kitchen assets, installed by
+# `python -m robocasa.scripts.download_kitchen_assets`
+robocasa/models/assets/README.md
+robocasa/models/assets/textures
+robocasa/models/assets/generative_textures
+robocasa/models/assets/objects
+robocasa/models/assets/model_zoo_assets
+robocasa/models/assets/demonstrations_private
+robocasa/models/assets/fixtures/**/*.glb
+robocasa/models/assets/fixtures/**/*.obj
+robocasa/models/assets/fixtures/**/*.mtl
+robocasa/models/assets/fixtures/**/*.blend
+robocasa/models/assets/fixtures/**/*.blend1
+robocasa/models/assets/fixtures/**/*.mp4
+robocasa/models/assets/fixtures/**/*.png
+robocasa/models/assets/fixtures/**/*.jpeg
+robocasa/models/assets/fixtures/**/model.xml
+!robocasa/models/assets/fixtures/fixture_registry/**
+!robocasa/models/assets/fixtures/accessories/**
+!robocasa/models/assets/fixtures/counters/**
+robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel*
+robocasa/models/assets/fixtures/handles/CabinetHandle*
+robocasa/models/assets/fixtures/blenders
+robocasa/models/assets/fixtures/coffee_machines
+robocasa/models/assets/fixtures/dishwashers
+robocasa/models/assets/fixtures/electric_kettles
+robocasa/models/assets/fixtures/fridges
+robocasa/models/assets/fixtures/hoods
+robocasa/models/assets/fixtures/microwaves
+robocasa/models/assets/fixtures/ovens
+robocasa/models/assets/fixtures/sinks
+robocasa/models/assets/fixtures/stand_mixers
+robocasa/models/assets/fixtures/stoves
+robocasa/models/assets/fixtures/stovetops
+robocasa/models/assets/fixtures/toaster_ovens
+robocasa/models/assets/fixtures/toasters
+robocasa/models/assets/fixtures/windows

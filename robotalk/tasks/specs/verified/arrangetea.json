@@ -1,0 +1,374 @@
+{
+  "spec_version": 1,
+  "composite_task": "ArrangeTea",
+  "source_python_module": "robocasa.environments.kitchen.composite.brewing.arrange_tea",
+  "agent_ids": [
+    "agent_0",
+    "agent_1"
+  ],
+  "max_reasoning_chars": 200,
+  "validator_checks": [
+    "initial_communication",
+    "allowed_tools",
+    "navigation_preconditions",
+    "manipulation_preconditions",
+    "effects",
+    "final_success"
+  ],
+  "preflight_token_estimate": {
+    "prompt_tokens": 3000,
+    "output_tokens": 3500,
+    "reasoning_tokens": 0
+  },
+  "initial_state": {
+    "agents": {
+      "agent_0": {
+        "location": "cab",
+        "held_object": null
+      },
+      "agent_1": {
+        "location": "counter",
+        "held_object": null
+      }
+    },
+    "objects": {
+      "mug": {
+        "object_type": "mug",
+        "location": "cab"
+      },
+      "kettle": {
+        "object_type": "kettle",
+        "location": "counter"
+      },
+      "tray": {
+        "object_type": "tray",
+        "location": "counter"
+      }
+    },
+    "fixtures": {
+      "cab": {
+        "fixture_type": "cabinet_double_door",
+        "parts": {
+          "hinged": {
+            "part_type": "hinged_part",
+            "state": "open"
+          }
+        },
+        "controls": {},
+        "parent_fixture": "counter"
+      },
+      "counter": {
+        "fixture_type": "counter",
+        "parts": {},
+        "controls": {}
+      }
+    },
+    "machine_state": {
+      "arrange_tea": {}
+    }
+  },
+  "allowed_tool_specs": {
+    "communicate": {
+      "description": "Send a short coordination message to the other agent in the scene. args.to must be that agent's exact ID. Set args.releases to the exact symbolic id of a thing you have finished with and are handing over -- that, and only that, wakes a partner who is waiting on it. Omit args.releases from every other message. args.releases must be an object id or a fixture id that appears in initial_state, copied exactly. It names a THING, never an event or a status: 'coffee_machine' and 'mug' are ids; 'mug_placed', 'counter_free' and 'task_done' are not, and an id that does not exist releases nothing at all. coordination_phase is optional and must be omitted from ordinary messages. Use it only for the opening propose/await_plan/await_confirmation/confirm handshake or for portion_complete.",
+      "tool_args": [
+        "to",
+        "message"
+      ],
+      "optional_tool_args": [
+        "releases",
+        "coordination_phase"
+      ],
+      "tool_arg_types": {
+        "coordination_phase": "STRING"
+      },
+      "allowed_arg_values": {
+        "coordination_phase": [
+          "propose",
+          "await_plan",
+          "await_confirmation",
+          "confirm",
+          "portion_complete"
+        ]
+      }
+    },
+    "wait_for_signal": {
+      "description": "Pause until the other agent hands over what you are waiting for. args.about names that thing by its exact symbolic id -- an object id or a fixture id that appears in initial_state, copied exactly. It is a THING you are waiting FOR, never an event you are waiting ON: wait about='coffee_machine', never about='mug_placed' or 'your_turn'. An id that is not in initial_state can never be released, so the wait blocks forever and the whole plan is thrown away. You stay paused until args.from sends a communicate whose args.releases names the same id -- their other messages do not wake you, so you do not need to wait again after an unrelated one.",
+      "tool_args": [
+        "from",
+        "about"
+      ]
+    },
+    "navigate_to_fixture": {
+      "description": "Move the robot base to the working pose of a fixture.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "cab",
+        "counter"
+      ]
+    },
+    "close_hinged_part": {
+      "description": "Close a hinged door, lid, or articulated head on a fixture.",
+      "tool_args": [
+        "target_id",
+        "part_id"
+      ],
+      "allowed_target_ids": [
+        "cab"
+      ],
+      "allowed_part_ids": [
+        "hinged"
+      ]
+    },
+    "pick_up_object": {
+      "description": "Grasp and lift an object from a symbolic source region.",
+      "tool_args": [
+        "object_id",
+        "source_id"
+      ],
+      "optional_tool_args": [
+        "source_site_id"
+      ],
+      "allowed_object_ids": [
+        "mug",
+        "kettle"
+      ],
+      "allowed_source_ids": [
+        "cab",
+        "counter"
+      ]
+    },
+    "place_in_receptacle": {
+      "description": "Place an object into an interior or container-like receptacle. Use target_site_id separately when the exact basin, bowl, rack, shelf, slot, or tray matters.",
+      "tool_args": [
+        "object_id"
+      ],
+      "tool_arg_any_of": [
+        [
+          "target_id",
+          "receptacle_id"
+        ]
+      ],
+      "optional_tool_args": [
+        "target_id",
+        "receptacle_id",
+        "target_site_id",
+        "relative_position"
+      ],
+      "allowed_object_ids": [
+        "mug",
+        "kettle"
+      ],
+      "allowed_receptacle_ids": [
+        "tray"
+      ]
+    },
+    "give_space": {
+      "description": "Yield working room at a fixture so the other agent can complete an action there.",
+      "tool_args": [
+        "fixture_id"
+      ],
+      "allowed_fixture_ids": [
+        "counter",
+        "cab"
+      ]
+    },
+    "open_hinged_part": {
+      "description": "Open a hinged door, lid, or articulated head on a fixture.",
+      "tool_args": [
+        "target_id",
+        "part_id"
+      ],
+      "allowed_target_ids": [
+        "cab"
+      ],
+      "allowed_part_ids": [
+        "hinged"
+      ]
+    }
+  },
+  "task_goal": "Pick the kettle from the counter and place it on the tray. Then pick the mug from the cabinet and place it on the tray. Finally, close the cabinet doors.",
+  "extra_execution_rules": [
+    "Inspect cab.hinged in the initial state. If it is closed, open it before retrieving the mug.",
+    "The cabinet doors must be closed after the mug is removed.",
+    "Both the kettle and the mug must be placed on the tray."
+  ],
+  "initial_public_state": {
+    "mug_location": "cab",
+    "kettle_location": "counter",
+    "tray_location": "counter",
+    "cabinet_state": "open"
+  },
+  "task_preconditions": [
+    {
+      "kind": "fixture_part_state_required_for_pickup",
+      "tool": "pick_up_object",
+      "source_id": "cab",
+      "fixture_id": "cab",
+      "part_id": "hinged",
+      "required_state": "open",
+      "message": "The cabinet must be open to retrieve the mug."
+    }
+  ],
+  "goal_conditions": [
+    {
+      "kind": "object_at_location",
+      "object_id": "kettle",
+      "location": "tray"
+    },
+    {
+      "kind": "object_at_location",
+      "object_id": "mug",
+      "location": "tray"
+    },
+    {
+      "kind": "fixture_part_state",
+      "fixture_id": "cab",
+      "part_id": "hinged",
+      "state": "closed"
+    }
+  ],
+  "task_effects": [],
+  "grounding": {
+    "legacy_symbol_aliases": {},
+    "symbols": {
+      "mug": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "mug"
+      },
+      "kettle": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "kettle"
+      },
+      "tray": {
+        "entity_type": "object",
+        "resolver": "object_by_type",
+        "object_type": "tray"
+      },
+      "cab": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "object_id": "mug",
+        "fixture_type": "cabinet_double_door"
+      },
+      "counter": {
+        "entity_type": "fixture",
+        "resolver": "unique_fixture_type",
+        "fixture_type": "counter"
+      }
+    }
+  },
+  "example_trajectory": {
+    "agents": [
+      {
+        "agent": "agent_0"
+      },
+      {
+        "agent": "agent_1"
+      }
+    ],
+    "steps": [
+      {
+        "step": 0,
+        "agent": "agent_0",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_1",
+          "message": "I will get the mug from the cabinet."
+        },
+        "reasoning": "Coordinating the first task."
+      },
+      {
+        "step": 1,
+        "agent": "agent_1",
+        "tool": "communicate",
+        "args": {
+          "to": "agent_0",
+          "message": "I will place the kettle on the tray."
+        },
+        "reasoning": "Coordinating the second task."
+      },
+      {
+        "step": 2,
+        "agent": "agent_1",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "kettle",
+          "source_id": "counter"
+        },
+        "reasoning": "Picking up the kettle from the counter."
+      },
+      {
+        "step": 3,
+        "agent": "agent_1",
+        "tool": "place_in_receptacle",
+        "args": {
+          "object_id": "kettle",
+          "receptacle_id": "tray"
+        },
+        "reasoning": "Placing the kettle on the tray."
+      },
+      {
+        "step": 4,
+        "agent": "agent_1",
+        "tool": "give_space",
+        "args": {
+          "fixture_id": "counter"
+        },
+        "reasoning": "Clearing space for agent_0 to place the mug on the tray."
+      },
+      {
+        "step": 5,
+        "agent": "agent_0",
+        "tool": "pick_up_object",
+        "args": {
+          "object_id": "mug",
+          "source_id": "cab"
+        },
+        "reasoning": "Picking up the mug from the open cabinet."
+      },
+      {
+        "step": 6,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "counter"
+        },
+        "reasoning": "Moving to the counter to reach the tray."
+      },
+      {
+        "step": 7,
+        "agent": "agent_0",
+        "tool": "place_in_receptacle",
+        "args": {
+          "object_id": "mug",
+          "receptacle_id": "tray"
+        },
+        "reasoning": "Placing the mug on the tray."
+      },
+      {
+        "step": 8,
+        "agent": "agent_0",
+        "tool": "navigate_to_fixture",
+        "args": {
+          "fixture_id": "cab"
+        },
+        "reasoning": "Returning to the cabinet to close it."
+      },
+      {
+        "step": 9,
+        "agent": "agent_0",
+        "tool": "close_hinged_part",
+        "args": {
+          "target_id": "cab",
+          "part_id": "hinged"
+        },
+        "reasoning": "Closing the cabinet doors as required."
+      }
+    ]
+  },
+  "notes": []
+}
