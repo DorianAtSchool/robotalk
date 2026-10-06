@@ -29,7 +29,7 @@ wait–release synchronization and exclusive-workspace rules.
 
 - Paper: *RoboTalk: Learning Multi-Robot Communication and Coordination from
   Multimodal Demonstrations* ([arXiv:2609.23997](https://arxiv.org/abs/2609.23997))
-- Code: *link added at code release*
+- Code: [DorianAtSchool/robotalk](https://github.com/DorianAtSchool/robotalk)
 - Fine-tuned adapters: `DorianAtSchool/RoboTalk-Qwen3-VL-8B-*`
 
 ## Contents
